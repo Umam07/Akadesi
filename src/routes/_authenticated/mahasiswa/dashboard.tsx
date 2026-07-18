@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { getDashboardData } from '../../../server/functions/academicFn'
-import { BookOpen, Calendar, Clock, Bell, CheckCircle, TrendingUp } from 'lucide-react'
+import { BookOpen, Calendar, Clock, Bell, TrendingUp } from 'lucide-react'
 import { IpsChart } from '../../../components/charts/IpsChart'
 
 export const Route = createFileRoute('/_authenticated/mahasiswa/dashboard')({

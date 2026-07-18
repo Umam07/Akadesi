@@ -7,7 +7,6 @@ import {
   Phone,
   GraduationCap,
   Building,
-  CheckCircle,
   Hash,
   BookOpen
 } from 'lucide-react'
