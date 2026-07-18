@@ -1,4 +1,4 @@
-import { Link, useRouter } from '@tanstack/react-router'
+import { Link, useRouter, isRedirect } from '@tanstack/react-router'
 import type { UserSession } from '../lib/auth'
 import { logoutFn } from '../server/functions/logoutFn'
 import { useState } from 'react'
@@ -14,8 +14,13 @@ export default function Header({ session }: HeaderProps) {
   const handleLogout = async () => {
     try {
       await logoutFn()
-      router.invalidate()
+      await router.invalidate()
     } catch (err) {
+      if (isRedirect(err)) {
+        await router.navigate(err.options)
+        await router.invalidate()
+        return
+      }
       console.error('Gagal logout:', err)
     }
   }
@@ -109,16 +114,7 @@ export default function Header({ session }: HeaderProps) {
                 Keluar
               </button>
             </div>
-          ) : (
-            <div className="hidden md:flex items-center gap-4">
-              <Link
-                to="/login"
-                className="inline-flex items-center justify-center py-1.5 px-4 rounded-lg text-xs font-bold text-[var(--sand)] bg-[var(--sea-ink)] hover:bg-[var(--sea-ink-soft)] transition-all cursor-pointer"
-              >
-                Masuk Portal
-              </Link>
-            </div>
-          )}
+          ) : null}
 
           {/* Mobile Menu Button */}
           {session && (

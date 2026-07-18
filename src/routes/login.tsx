@@ -1,8 +1,17 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute, useRouter, redirect, isRedirect } from '@tanstack/react-router'
 import { loginFn } from '../server/functions/loginFn'
+import { getAuthSession } from '../server/functions/authFn'
 import { useState } from 'react'
 
 export const Route = createFileRoute('/login')({
+  beforeLoad: async () => {
+    const session = await getAuthSession()
+    if (session) {
+      throw redirect({
+        to: '/mahasiswa/dashboard',
+      })
+    }
+  },
   component: LoginPage,
 })
 
@@ -23,6 +32,11 @@ function LoginPage() {
       // router.invalidate() is handled automatically by TanStack Start on navigation, but we call it just in case
       router.invalidate()
     } catch (err: any) {
+      if (isRedirect(err)) {
+        await router.navigate(err.options)
+        await router.invalidate()
+        return
+      }
       setError(err.message || 'Terjadi kesalahan saat login')
     } finally {
       setIsLoading(false)
