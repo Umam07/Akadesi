@@ -18,6 +18,7 @@ import { Route as AuthenticatedMahasiswaJadwalRouteImport } from './routes/_auth
 import { Route as AuthenticatedMahasiswaKhsRouteImport } from './routes/_authenticated/mahasiswa/khs'
 import { Route as AuthenticatedMahasiswaKrsRouteImport } from './routes/_authenticated/mahasiswa/krs'
 import { Route as AuthenticatedMahasiswaPengumumanRouteImport } from './routes/_authenticated/mahasiswa/pengumuman'
+import { Route as AuthenticatedMahasiswaProfilRouteImport } from './routes/_authenticated/mahasiswa/profil'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -68,6 +69,12 @@ const AuthenticatedMahasiswaPengumumanRoute =
     path: '/mahasiswa/pengumuman',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedMahasiswaProfilRoute =
+  AuthenticatedMahasiswaProfilRouteImport.update({
+    id: '/mahasiswa/profil',
+    path: '/mahasiswa/profil',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/mahasiswa/khs': typeof AuthenticatedMahasiswaKhsRoute
   '/mahasiswa/krs': typeof AuthenticatedMahasiswaKrsRoute
   '/mahasiswa/pengumuman': typeof AuthenticatedMahasiswaPengumumanRoute
+  '/mahasiswa/profil': typeof AuthenticatedMahasiswaProfilRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -88,6 +96,7 @@ export interface FileRoutesByTo {
   '/mahasiswa/khs': typeof AuthenticatedMahasiswaKhsRoute
   '/mahasiswa/krs': typeof AuthenticatedMahasiswaKrsRoute
   '/mahasiswa/pengumuman': typeof AuthenticatedMahasiswaPengumumanRoute
+  '/mahasiswa/profil': typeof AuthenticatedMahasiswaProfilRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -100,6 +109,7 @@ export interface FileRoutesById {
   '/_authenticated/mahasiswa/khs': typeof AuthenticatedMahasiswaKhsRoute
   '/_authenticated/mahasiswa/krs': typeof AuthenticatedMahasiswaKrsRoute
   '/_authenticated/mahasiswa/pengumuman': typeof AuthenticatedMahasiswaPengumumanRoute
+  '/_authenticated/mahasiswa/profil': typeof AuthenticatedMahasiswaProfilRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -112,6 +122,7 @@ export interface FileRouteTypes {
     | '/mahasiswa/khs'
     | '/mahasiswa/krs'
     | '/mahasiswa/pengumuman'
+    | '/mahasiswa/profil'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +133,7 @@ export interface FileRouteTypes {
     | '/mahasiswa/khs'
     | '/mahasiswa/krs'
     | '/mahasiswa/pengumuman'
+    | '/mahasiswa/profil'
   id:
     | '__root__'
     | '/'
@@ -133,6 +145,7 @@ export interface FileRouteTypes {
     | '/_authenticated/mahasiswa/khs'
     | '/_authenticated/mahasiswa/krs'
     | '/_authenticated/mahasiswa/pengumuman'
+    | '/_authenticated/mahasiswa/profil'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -207,6 +220,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMahasiswaPengumumanRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/mahasiswa/profil': {
+      id: '/_authenticated/mahasiswa/profil'
+      path: '/mahasiswa/profil'
+      fullPath: '/mahasiswa/profil'
+      preLoaderRoute: typeof AuthenticatedMahasiswaProfilRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -216,6 +236,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMahasiswaKhsRoute: typeof AuthenticatedMahasiswaKhsRoute
   AuthenticatedMahasiswaKrsRoute: typeof AuthenticatedMahasiswaKrsRoute
   AuthenticatedMahasiswaPengumumanRoute: typeof AuthenticatedMahasiswaPengumumanRoute
+  AuthenticatedMahasiswaProfilRoute: typeof AuthenticatedMahasiswaProfilRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -224,6 +245,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMahasiswaKhsRoute: AuthenticatedMahasiswaKhsRoute,
   AuthenticatedMahasiswaKrsRoute: AuthenticatedMahasiswaKrsRoute,
   AuthenticatedMahasiswaPengumumanRoute: AuthenticatedMahasiswaPengumumanRoute,
+  AuthenticatedMahasiswaProfilRoute: AuthenticatedMahasiswaProfilRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

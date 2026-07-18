@@ -40,6 +40,11 @@ async function seed() {
         ipk: 3.50,
         totalSksLulus: 60,
         semesterAktif: 4,
+        email: 'budi.santoso@yarsi.ac.id',
+        fakultas: 'Teknologi Informasi',
+        jurusan: 'Teknik Informatika',
+        noTelepon: '081234567890',
+        alamatJalan: 'Jl. Letjen Suprapto No. 1, Cempaka Putih, Jakarta Pusat',
       },
       {
         nim: '987654321',
@@ -48,6 +53,11 @@ async function seed() {
         ipk: 2.80,
         totalSksLulus: 36,
         semesterAktif: 3,
+        email: 'siti.aminah@yarsi.ac.id',
+        fakultas: 'Teknologi Informasi',
+        jurusan: 'Teknik Informatika',
+        noTelepon: '089876543210',
+        alamatJalan: 'Jl. Salemba Raya No. 2, Senen, Jakarta Pusat',
       }
     ]).returning();
 

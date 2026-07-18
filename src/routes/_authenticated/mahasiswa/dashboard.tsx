@@ -28,8 +28,8 @@ function DashboardPage() {
             <h2 className="demo-title display-title text-2xl md:text-3xl font-bold">
               Selamat datang, {student.nama}!
             </h2>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-              <CheckCircle className="h-3 w-3" />
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-50/60 text-emerald-700 border border-emerald-600/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               Mahasiswa Aktif
             </span>
           </div>
