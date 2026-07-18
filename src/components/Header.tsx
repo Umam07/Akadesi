@@ -13,6 +13,7 @@ import {
   X,
   ChevronDown,
   ShieldCheck,
+  User,
 } from 'lucide-react'
 
 interface HeaderProps {
@@ -36,7 +37,7 @@ function nameToHue(name: string): number {
   return Math.abs(hash) % 360
 }
 
-function AvatarInitial({ name }: { name: string }) {
+export function AvatarInitial({ name }: { name: string }) {
   const initials = name
     .split(' ')
     .slice(0, 2)
@@ -107,7 +108,7 @@ export default function Header({ session }: HeaderProps) {
       <nav className="page-wrap flex items-center justify-between py-0" style={{ height: 60 }}>
 
         {/* Left: Brand + Nav Links */}
-        <div className="flex items-center gap-7">
+        <div className="flex items-center gap-12 md:gap-16">
 
           {/* Brand Logo */}
           <Link
@@ -277,20 +278,53 @@ export default function Header({ session }: HeaderProps) {
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: 4,
-                          marginTop: 4,
-                          fontSize: 10,
-                          fontWeight: 700,
-                          color: '#166534',
-                          background: '#dcfce7',
-                          border: '1px solid #bbf7d0',
-                          borderRadius: 999,
-                          padding: '1px 7px',
+                          gap: 6,
+                          marginTop: 6,
+                          fontSize: 9,
+                          fontWeight: 800,
+                          color: '#047857',
+                          background: '#f0fdf4',
+                          border: '1px solid rgba(4,120,87,0.15)',
+                          borderRadius: 6,
+                          padding: '2px 6px',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
                         }}
                       >
-                        ● Mahasiswa Aktif
+                        <span style={{ display: 'block', width: 5, height: 5, borderRadius: '50%', background: '#10b981' }} />
+                        Mahasiswa Aktif
                       </span>
                     </div>
+                  </div>
+
+                  {/* Profile Link */}
+                  <div style={{ padding: '8px 8px 0px 8px', borderBottom: '1px solid var(--line)' }}>
+                    <Link
+                      to="/mahasiswa/profil"
+                      onClick={() => setIsProfileOpen(false)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        width: '100%',
+                        padding: '9px 10px',
+                        borderRadius: 10,
+                        border: 'none',
+                        background: 'transparent',
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: 'var(--sea-ink)',
+                        fontFamily: 'Manrope, sans-serif',
+                        transition: 'background 150ms ease',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--surface-strong)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <User size={15} strokeWidth={2.5} style={{ color: 'var(--sea-ink-soft)' }} />
+                      Detail Profil Saya
+                    </Link>
                   </div>
 
                   {/* Logout */}
@@ -344,7 +378,9 @@ export default function Header({ session }: HeaderProps) {
       {session && isMobileOpen && (
         <div className="md:hidden border-t border-[var(--line)] rise-in">
           {/* Profile card at top of mobile drawer */}
-          <div
+          <Link
+            to="/mahasiswa/profil"
+            onClick={() => setIsMobileOpen(false)}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -352,7 +388,9 @@ export default function Header({ session }: HeaderProps) {
               padding: '14px 16px',
               background: 'linear-gradient(135deg, var(--sand) 0%, var(--foam) 100%)',
               borderBottom: '1px solid var(--line)',
+              textDecoration: 'none',
             }}
+            className="hover:opacity-90 active:scale-[0.99] transition-all"
           >
             <AvatarInitial name={session.nama} />
             <div style={{ minWidth: 0, flex: 1 }}>
@@ -365,19 +403,25 @@ export default function Header({ session }: HeaderProps) {
             </div>
             <span
               style={{
-                fontSize: 10,
-                fontWeight: 700,
-                color: '#166534',
-                background: '#dcfce7',
-                border: '1px solid #bbf7d0',
-                borderRadius: 999,
-                padding: '2px 8px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                fontSize: 9,
+                fontWeight: 800,
+                color: '#047857',
+                background: '#f0fdf4',
+                border: '1px solid rgba(4,120,87,0.15)',
+                borderRadius: 6,
+                padding: '2px 6px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
                 flexShrink: 0,
               }}
             >
+              <span style={{ display: 'block', width: 4, height: 4, borderRadius: '50%', background: '#10b981' }} />
               Aktif
             </span>
-          </div>
+          </Link>
 
           {/* Mobile nav links */}
           <div style={{ padding: '8px 8px' }}>

@@ -8,6 +8,11 @@ export const mahasiswa = pgTable("mahasiswa", {
   ipk: real("ipk").notNull(),
   totalSksLulus: integer("total_sks_lulus").notNull(),
   semesterAktif: integer("semester_aktif").notNull(),
+  email: varchar("email", { length: 255 }),
+  fakultas: varchar("fakultas", { length: 255 }),
+  jurusan: varchar("jurusan", { length: 255 }),
+  noTelepon: varchar("no_telepon", { length: 50 }),
+  alamatJalan: varchar("alamat_jalan", { length: 255 }),
 });
 
 export const mataKuliah = pgTable("mata_kuliah", {

@@ -537,3 +537,22 @@ export const markPengumumanRead = createServerFn({ method: 'POST' })
 
     return { success: true }
   })
+
+// 8. Get Student Profile Data Function
+export const getProfileData = createServerFn({ method: 'GET' })
+  .handler(async () => {
+    const session = await requireAuth()
+    const studentId = session.id
+
+    const studentInfo = await db.query.mahasiswa.findFirst({
+      where: eq(mahasiswa.id, studentId)
+    })
+
+    if (!studentInfo) {
+      throw new Error('Data mahasiswa tidak ditemukan')
+    }
+
+    return {
+      student: studentInfo
+    }
+  })
