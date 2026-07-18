@@ -1,70 +1,190 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { getAuthSession } from '../../../server/functions/authFn'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { getDashboardData } from '../../../server/functions/academicFn'
+import { BookOpen, Calendar, Clock, Bell, CheckCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/_authenticated/mahasiswa/dashboard')({
   loader: async () => {
-    const session = await getAuthSession()
-    return { session }
+    return await getDashboardData()
   },
   component: DashboardPage,
 })
 
 function DashboardPage() {
-  const { session } = Route.useLoaderData()
+  const { student, todaySchedule, announcements, todayDayName } = Route.useLoaderData()
+
+  // Format date
+  const formatDate = (dateStr: string | Date) => {
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-      <div className="md:flex md:items-center md:justify-between mb-8">
-        <div className="flex-1 min-w-0">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            Selamat datang, {session?.nama}!
-          </h2>
-          <p className="mt-1 text-sm text-gray-500">
-            NIM: {session?.nim}
+    <div className="demo-page demo-page-wide flex flex-col gap-8 w-full rise-in">
+      {/* Welcome & Profile Summary Section */}
+      <div className="demo-panel flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h2 className="demo-title display-title text-2xl md:text-3xl font-bold">
+              Selamat datang, {student.nama}!
+            </h2>
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <CheckCircle className="h-3 w-3" />
+              Mahasiswa Aktif
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-[var(--sea-ink-soft)] font-medium">
+            Program Studi Teknik Informatika — NIM {student.nim}
           </p>
         </div>
-      </div>
-      
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-200">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-emerald-100 rounded-md p-3">
-                <svg className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">IPK Terkini</dt>
-                  <dd className="text-lg font-semibold text-gray-900">3.50</dd>
-                </dl>
-              </div>
-            </div>
+
+        {/* Academics Stats Mini cards */}
+        <div className="flex flex-wrap gap-3 w-full md:w-auto">
+          <div className="flex-1 md:flex-none border border-[var(--line)] bg-[var(--surface-strong)] px-4 py-2.5 rounded-xl text-center min-w-[100px]">
+            <span className="block text-[9px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)]">Semester</span>
+            <span className="text-xl font-extrabold text-[var(--sea-ink)]">{student.semesterAktif}</span>
+          </div>
+          <div className="flex-1 md:flex-none border border-[var(--line)] bg-[var(--surface-strong)] px-4 py-2.5 rounded-xl text-center min-w-[100px]">
+            <span className="block text-[9px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)]">IPK Kumulatif</span>
+            <span className="text-xl font-extrabold text-[var(--sea-ink)]">{student.ipk.toFixed(2)}</span>
+          </div>
+          <div className="flex-1 md:flex-none border border-[var(--line)] bg-[var(--surface-strong)] px-4 py-2.5 rounded-xl text-center min-w-[100px]">
+            <span className="block text-[9px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)]">SKS Lulus</span>
+            <span className="text-xl font-extrabold text-[var(--sea-ink)]">{student.totalSksLulus} SKS</span>
           </div>
         </div>
+      </div>
+
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <div className="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-200">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-emerald-100 rounded-md p-3">
-                <svg className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Total SKS Lulus</dt>
-                  <dd className="text-lg font-semibold text-gray-900">60 SKS</dd>
-                </dl>
-              </div>
+        {/* Left Side: Today's Schedule (2 cols wide) */}
+        <div className="lg:col-span-2 flex flex-col gap-5">
+          <div className="flex items-center justify-between">
+            <h3 className="display-title text-xl font-bold flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-[var(--lagoon-deep)]" />
+              Jadwal Kuliah Hari Ini ({todayDayName})
+            </h3>
+            <Link
+              to="/mahasiswa/jadwal"
+              className="text-xs font-bold text-[var(--lagoon-deep)] hover:underline flex items-center gap-1"
+            >
+              Lihat Jadwal Mingguan &rarr;
+            </Link>
+          </div>
+
+          {todaySchedule.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              {todaySchedule.map((classItem) => (
+                <div 
+                  key={classItem.id} 
+                  className="demo-card border border-[var(--line)] hover:border-[var(--lagoon-deep)] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 bg-[var(--sand)] rounded-xl p-3 text-[var(--sea-ink)] flex items-center justify-center">
+                      <BookOpen className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-mono font-bold uppercase tracking-wide text-[var(--sea-ink-soft)] bg-[var(--chip-bg)] px-2 py-0.5 rounded border border-[var(--chip-line)]">
+                          {classItem.kodeMk}
+                        </span>
+                        <span className="text-xs font-semibold text-[var(--sea-ink-soft)]">
+                          {classItem.sks} SKS
+                        </span>
+                      </div>
+                      <h4 className="text-base font-bold text-[var(--sea-ink)] mt-1.5 leading-snug">
+                        {classItem.namaMk}
+                      </h4>
+                      <p className="text-xs font-medium text-[var(--sea-ink-soft)] mt-1">
+                        Dosen: {classItem.namaDosen}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 border-t sm:border-t-0 pt-3 sm:pt-0 border-[var(--line)]">
+                    <div className="flex items-center gap-1.5 text-sm font-semibold text-[var(--sea-ink)]">
+                      <Clock className="h-4 w-4 text-[var(--lagoon-deep)]" />
+                      <span>{classItem.jamMulai.substring(0, 5)} - {classItem.jamSelesai.substring(0, 5)}</span>
+                    </div>
+                    <span className="text-xs font-bold text-[var(--sea-ink-soft)] bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
+                      Ruang: {classItem.ruangan}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
+          ) : (
+            <div className="demo-panel border border-dashed border-[var(--sea-ink-soft)]/30 rounded-xl text-center py-12 px-6 bg-white/40">
+              <Calendar className="h-10 w-10 text-[var(--sea-ink-soft)]/40 mx-auto mb-3" />
+              <h4 className="font-bold text-[var(--sea-ink)] text-base">Tidak ada jadwal kuliah hari ini</h4>
+              <p className="text-xs text-[var(--sea-ink-soft)] mt-1 max-w-sm mx-auto leading-relaxed">
+                Hari ini Anda bebas dari jadwal perkuliahan kelas. Nikmati waktu istirahat Anda atau pelajari materi perkuliahan secara mandiri!
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side: Announcements (1 col wide) */}
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center justify-between">
+            <h3 className="display-title text-xl font-bold flex items-center gap-2">
+              <Bell className="h-5 w-5 text-[var(--lagoon-deep)]" />
+              Pengumuman Baru
+            </h3>
+            <Link
+              to="/mahasiswa/pengumuman"
+              className="text-xs font-bold text-[var(--lagoon-deep)] hover:underline"
+            >
+              Semua &rarr;
+            </Link>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            {announcements.length > 0 ? (
+              announcements.map((ann) => (
+                <div 
+                  key={ann.id} 
+                  className="demo-card border border-[var(--line)] bg-[var(--surface-strong)] flex flex-col justify-between gap-3.5 p-5 relative"
+                >
+                  {/* Unread indicator */}
+                  {!ann.read && (
+                    <span className="absolute top-4 right-4 flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                  )}
+
+                  <div>
+                    <span className="block text-[10px] font-bold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+                      {formatDate(ann.diterbitkanPada)}
+                    </span>
+                    <h4 className="text-sm font-bold text-[var(--sea-ink)] mt-1.5 leading-snug line-clamp-2">
+                      {ann.judul}
+                    </h4>
+                    <p className="text-xs text-[var(--sea-ink-soft)] mt-2 leading-relaxed line-clamp-3">
+                      {ann.isi}
+                    </p>
+                  </div>
+
+                  <div className="border-t border-[var(--line)] pt-3 flex justify-end">
+                    <Link
+                      to="/mahasiswa/pengumuman"
+                      className="text-xs font-bold text-[var(--lagoon-deep)] hover:underline flex items-center gap-1"
+                    >
+                      Baca Selengkapnya
+                    </Link>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="demo-panel border border-dashed border-[var(--sea-ink-soft)]/30 rounded-xl text-center py-8 px-4 bg-white/40">
+                <Bell className="h-8 w-8 text-[var(--sea-ink-soft)]/40 mx-auto mb-2.5" />
+                <h5 className="font-bold text-[var(--sea-ink)] text-sm">Tidak ada pengumuman baru</h5>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-      
-      <div className="mt-8 flex flex-col items-center justify-center p-12 bg-white rounded-xl border border-dashed border-gray-300">
-        <p className="text-gray-500">Dashboard details will be implemented in Phase 2</p>
+
       </div>
     </div>
   )

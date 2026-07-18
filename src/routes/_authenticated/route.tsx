@@ -1,9 +1,9 @@
 import { createFileRoute, redirect, Outlet } from '@tanstack/react-router'
-import { getAuthSession } from '../../server/functions/authFn'
+import { verifyStudentSession } from '../../server/functions/authFn'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async () => {
-    const session = await getAuthSession()
+    const session = await verifyStudentSession()
     if (!session) {
       throw redirect({
         to: '/login',
@@ -21,3 +21,5 @@ function AuthenticatedLayout() {
     </div>
   )
 }
+
+

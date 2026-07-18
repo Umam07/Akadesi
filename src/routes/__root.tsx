@@ -1,12 +1,17 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import { getAuthSession } from '../server/functions/authFn'
 
 import appCss from '../styles.css?url'
 
 const THEME_INIT_SCRIPT = `(function(){try{var root=document.documentElement;root.classList.remove('dark');root.classList.add('light');root.setAttribute('data-theme','light');root.style.colorScheme='light';}catch(e){}})();`
 
 export const Route = createRootRoute({
+  loader: async () => {
+    const session = await getAuthSession()
+    return { session }
+  },
   head: () => ({
     meta: [
       {
@@ -17,7 +22,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Akadesi — Redesign Konsep SIAKAD YARSI',
       },
     ],
     links: [
@@ -31,6 +36,8 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { session } = Route.useLoaderData()
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -38,7 +45,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
-        <Header />
+        <Header session={session} />
         {children}
         <Footer />
         <Scripts />
@@ -46,3 +53,4 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     </html>
   )
 }
+
