@@ -143,7 +143,7 @@ function KhsPage() {
               Perkembangan IPS per Semester
             </h3>
             <p className="text-xs text-[var(--sea-ink-soft)] font-medium mt-0.5">
-              Bar = IPS semester · Garis = tren · Garis putus = batas predikat (3.5, 3.0, 2.0)
+              Perkembangan indeks prestasi semester Anda dari waktu ke waktu.
             </p>
           </div>
           {khsBySemester.length > 0 ? (

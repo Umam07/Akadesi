@@ -1,6 +1,6 @@
 import {
   ComposedChart,
-  Bar,
+  Area,
   Line,
   XAxis,
   YAxis,
@@ -40,15 +40,18 @@ function ipsLabel(ips: number): string {
 // Use a generic object for tooltip props to avoid recharts version issues
 interface TooltipContentProps {
   active?: boolean
-  payload?: ReadonlyArray<{ value?: number | string; name?: string }>
+  payload?: ReadonlyArray<{ value?: number | string; name?: string; payload?: unknown }>
   label?: string
 }
 
 // Custom tooltip styled with Akadesi tokens (inline styles for portability)
 function CustomTooltip({ active, payload, label }: TooltipContentProps) {
   if (!active || !payload || payload.length === 0) return null
-  const ips = typeof payload[0]?.value === 'number' ? payload[0].value : undefined
-  const sks = typeof payload[1]?.value === 'number' ? payload[1].value : undefined
+
+  // Safely get data from the underlying payload object
+  const dataPoint = payload[0].payload as { ips?: number; sks?: number } | undefined
+  const ips = dataPoint?.ips
+  const sks = dataPoint?.sks
 
   return (
     <div
@@ -93,6 +96,13 @@ export function IpsChart({ data }: IpsChartProps) {
         data={chartData}
         margin={{ top: 8, right: 8, left: -24, bottom: 0 }}
       >
+        <defs>
+          <linearGradient id="ipsGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#4fb8b2" stopOpacity={0.35} />
+            <stop offset="95%" stopColor="#4fb8b2" stopOpacity={0.0} />
+          </linearGradient>
+        </defs>
+
         <CartesianGrid
           strokeDasharray="3 3"
           stroke="rgba(23,58,64,0.08)"
@@ -118,29 +128,27 @@ export function IpsChart({ data }: IpsChartProps) {
 
         <Tooltip
           content={(props) => <CustomTooltip {...(props as unknown as TooltipContentProps)} />}
-          cursor={{ fill: 'rgba(79,184,178,0.06)' }}
+          cursor={{ stroke: 'rgba(23,58,64,0.1)', strokeWidth: 1 }}
         />
 
-        {/* Bar for IPS value */}
-        <Bar
+        {/* Gradient Area Fill */}
+        <Area
+          type="monotone"
           dataKey="ips"
-          name="IPS"
-          fill="rgba(79,184,178,0.35)"
-          stroke="#328f97"
-          strokeWidth={1}
-          radius={[6, 6, 0, 0]}
-          maxBarSize={52}
+          stroke="none"
+          fill="url(#ipsGradient)"
+          activeDot={false}
         />
 
-        {/* Line overlay */}
+        {/* Main Line with Dot Indicators */}
         <Line
           type="monotone"
           dataKey="ips"
-          name="Tren IPS"
-          stroke="#2f6a4a"
-          strokeWidth={2.5}
-          dot={{ r: 4, fill: '#2f6a4a', stroke: '#fff', strokeWidth: 2 }}
-          activeDot={{ r: 6, fill: '#2f6a4a', stroke: '#fff', strokeWidth: 2 }}
+          name="IPS"
+          stroke="#328f97"
+          strokeWidth={3}
+          dot={{ r: 4.5, fill: '#328f97', stroke: '#fff', strokeWidth: 2 }}
+          activeDot={{ r: 6.5, fill: '#173a40', stroke: '#fff', strokeWidth: 2 }}
         />
       </ComposedChart>
     </ResponsiveContainer>
