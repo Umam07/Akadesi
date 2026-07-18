@@ -9,7 +9,6 @@ import {
   Save,
   Info,
   Search,
-  Filter,
   Calendar,
   Trash2,
   Clock,
@@ -19,7 +18,6 @@ import {
   RefreshCw,
   Check,
   X,
-  ChevronRight,
   HelpCircle
 } from 'lucide-react'
 
