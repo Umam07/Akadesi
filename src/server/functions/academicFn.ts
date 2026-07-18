@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { db } from '../../db'
+import { dbMiddleware } from '../../db/middleware'
 import { mahasiswa, krsItem, jadwal, mataKuliah, dosen, pengumuman, pengumumanDibaca, khs } from '../../db/schema'
 import { eq, and, desc, inArray } from 'drizzle-orm'
 import { getSession } from '../../lib/auth'
@@ -22,7 +22,9 @@ function getTodayIndo() {
 
 // 1. Dashboard Data Function
 export const getDashboardData = createServerFn({ method: 'GET' })
-  .handler(async () => {
+  .middleware([dbMiddleware])
+  .handler(async ({ context }) => {
+    const db = context.db
     const session = await requireAuth()
     const studentId = session.id
     const todayIndo = getTodayIndo()
@@ -136,7 +138,9 @@ export const getDashboardData = createServerFn({ method: 'GET' })
 
 // 2. Weekly Schedule Function
 export const getJadwalData = createServerFn({ method: 'GET' })
-  .handler(async () => {
+  .middleware([dbMiddleware])
+  .handler(async ({ context }) => {
+    const db = context.db
     const session = await requireAuth()
     const studentId = session.id
 
@@ -170,7 +174,9 @@ export const getJadwalData = createServerFn({ method: 'GET' })
 
 // 3. KRS Data Function
 export const getKrsData = createServerFn({ method: 'GET' })
-  .handler(async () => {
+  .middleware([dbMiddleware])
+  .handler(async ({ context }) => {
+    const db = context.db
     const session = await requireAuth()
     const studentId = session.id
 
@@ -276,8 +282,10 @@ const submitKrsSchema = z.object({
 })
 
 export const submitKrs = createServerFn({ method: 'POST' })
+  .middleware([dbMiddleware])
   .validator((data: unknown) => submitKrsSchema.parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const db = context.db
     const session = await requireAuth()
     const studentId = session.id
     const { courseIds } = data
@@ -388,7 +396,9 @@ export const submitKrs = createServerFn({ method: 'POST' })
 
 // 5. KHS and Transcript Data Function
 export const getKhsData = createServerFn({ method: 'GET' })
-  .handler(async () => {
+  .middleware([dbMiddleware])
+  .handler(async ({ context }) => {
+    const db = context.db
     const session = await requireAuth()
     const studentId = session.id
 
@@ -472,7 +482,9 @@ export const getKhsData = createServerFn({ method: 'GET' })
 
 // 6. Announcements Feed Function
 export const getPengumumanData = createServerFn({ method: 'GET' })
-  .handler(async () => {
+  .middleware([dbMiddleware])
+  .handler(async ({ context }) => {
+    const db = context.db
     const session = await requireAuth()
     const studentId = session.id
 
@@ -513,8 +525,10 @@ const markReadSchema = z.object({
 })
 
 export const markPengumumanRead = createServerFn({ method: 'POST' })
+  .middleware([dbMiddleware])
   .validator((data: unknown) => markReadSchema.parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const db = context.db
     const session = await requireAuth()
     const studentId = session.id
     const { pengumumanId } = data
@@ -540,7 +554,9 @@ export const markPengumumanRead = createServerFn({ method: 'POST' })
 
 // 8. Get Student Profile Data Function
 export const getProfileData = createServerFn({ method: 'GET' })
-  .handler(async () => {
+  .middleware([dbMiddleware])
+  .handler(async ({ context }) => {
+    const db = context.db
     const session = await requireAuth()
     const studentId = session.id
 

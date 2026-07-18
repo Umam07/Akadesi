@@ -159,41 +159,40 @@ function LoginPage() {
                   </button>
                 </div>
                 
-                <div className="pt-4 border-t border-[var(--line)] mt-6">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)] text-center mb-3">
-                    Gunakan Kredensial Demo
+                <div className="pt-4 border-t border-[var(--line)] mt-5">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)] text-center mb-2.5">
+                    Gunakan Kredensial Demo (5 Mahasiswa)
                   </p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNim('123456789')
-                        setPassword('dummy-hash-1')
-                      }}
-                      className="text-left p-3 rounded-lg border border-[var(--line)] bg-[var(--chip-bg)] hover:border-[var(--sea-ink)] transition-all duration-200 group cursor-pointer active:scale-[0.97]"
-                    >
-                      <span className="block text-[9px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)] group-hover:text-[var(--sea-ink)] transition-colors">
-                        Mahasiswa 1
-                      </span>
-                      <span className="block text-xs font-mono font-semibold text-[var(--sea-ink)] mt-0.5">
-                        123456789
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNim('987654321')
-                        setPassword('dummy-hash-2')
-                      }}
-                      className="text-left p-3 rounded-lg border border-[var(--line)] bg-[var(--chip-bg)] hover:border-[var(--sea-ink)] transition-all duration-200 group cursor-pointer active:scale-[0.97]"
-                    >
-                      <span className="block text-[9px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)] group-hover:text-[var(--sea-ink)] transition-colors">
-                        Mahasiswa 2
-                      </span>
-                      <span className="block text-xs font-mono font-semibold text-[var(--sea-ink)] mt-0.5">
-                        987654321
-                      </span>
-                    </button>
+                  <div className="max-h-52 overflow-y-auto pr-1.5 space-y-2 scrollbar-thin">
+                    {[
+                      { nim: '120100001', nama: 'Farhan Ramadhan', prodi: 'Teknik Informatika', pw: 'password1', detail: 'Sem 5 • IPK 3.85' },
+                      { nim: '120100002', nama: 'Larasati Putri', prodi: 'Sistem Informasi', pw: 'password2', detail: 'Sem 3 • IPK 3.42' },
+                      { nim: '120200003', nama: 'Rian Hidayat', prodi: 'Akuntansi', pw: 'password3', detail: 'Sem 7 • IPK 2.95' },
+                      { nim: '120200004', nama: 'Nadia Utami', prodi: 'Kedokteran Umum', pw: 'password4', detail: 'Sem 3 • IPK 3.68' },
+                      { nim: '120200005', nama: 'Daffa Saputra', prodi: 'Ilmu Hukum', pw: 'password5', detail: 'Sem 2 • IPK 3.15' },
+                    ].map((mhs) => (
+                      <button
+                        key={mhs.nim}
+                        type="button"
+                        onClick={() => {
+                          setNim(mhs.nim)
+                          setPassword(mhs.pw)
+                        }}
+                        className="w-full text-left p-2.5 rounded-lg border border-[var(--line)] bg-[var(--chip-bg)] hover:border-[var(--sea-ink)] hover:bg-[var(--surface)] transition-all duration-200 group cursor-pointer active:scale-[0.98] flex items-center justify-between gap-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <span className="block text-xs font-bold text-[var(--sea-ink)] truncate group-hover:text-[var(--sea-ink)] transition-colors">
+                            {mhs.nama}
+                          </span>
+                          <span className="block text-[9px] text-[var(--sea-ink-soft)] font-medium mt-0.5 truncate">
+                            {mhs.prodi} • NIM: {mhs.nim} • {mhs.detail}
+                          </span>
+                        </div>
+                        <span className="shrink-0 text-[9px] font-bold bg-[var(--line)] px-2 py-0.5 rounded text-[var(--sea-ink-soft)] uppercase tracking-wider group-hover:bg-[var(--sea-ink)] group-hover:text-[var(--sand)] transition-all duration-200">
+                          Pilih
+                        </span>
+                      </button>
+                    ))}
                   </div>
                 </div>
               </form>
