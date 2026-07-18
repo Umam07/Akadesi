@@ -11,10 +11,7 @@ import {
   Activity,
   User,
   GraduationCap,
-  MessageSquare,
-  Sparkles,
-  Info,
-  Clock
+  MessageSquare
 } from 'lucide-react'
 import { IpsChart } from '../../../components/charts/IpsChart'
 import { GraduationRadialChart } from '../../../components/charts/GraduationRadialChart'
