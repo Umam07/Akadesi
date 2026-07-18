@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { getDashboardData } from '../../../server/functions/academicFn'
-import { BookOpen, Calendar, Clock, Bell, CheckCircle } from 'lucide-react'
+import { BookOpen, Calendar, Clock, Bell, CheckCircle, TrendingUp } from 'lucide-react'
+import { IpsChart } from '../../../components/charts/IpsChart'
 
 export const Route = createFileRoute('/_authenticated/mahasiswa/dashboard')({
   loader: async () => {
@@ -10,9 +11,8 @@ export const Route = createFileRoute('/_authenticated/mahasiswa/dashboard')({
 })
 
 function DashboardPage() {
-  const { student, todaySchedule, announcements, todayDayName } = Route.useLoaderData()
+  const { student, todaySchedule, announcements, todayDayName, ipsTrend } = Route.useLoaderData()
 
-  // Format date
   const formatDate = (dateStr: string | Date) => {
     const d = new Date(dateStr)
     return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -20,7 +20,8 @@ function DashboardPage() {
 
   return (
     <div className="demo-page demo-page-wide flex flex-col gap-8 w-full rise-in">
-      {/* Welcome & Profile Summary Section */}
+
+      {/* Welcome & Profile Summary */}
       <div className="demo-panel flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -37,7 +38,7 @@ function DashboardPage() {
           </p>
         </div>
 
-        {/* Academics Stats Mini cards */}
+        {/* Academics Stats Mini Cards */}
         <div className="flex flex-wrap gap-3 w-full md:w-auto">
           <div className="flex-1 md:flex-none border border-[var(--line)] bg-[var(--surface-strong)] px-4 py-2.5 rounded-xl text-center min-w-[100px]">
             <span className="block text-[9px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)]">Semester</span>
@@ -54,10 +55,34 @@ function DashboardPage() {
         </div>
       </div>
 
-      {/* Main Grid Layout */}
+      {/* IPS Trend Mini Chart */}
+      {ipsTrend.length > 0 && (
+        <div className="demo-panel border border-[var(--line)] bg-[var(--surface-strong)] p-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="display-title text-lg font-bold flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-[var(--lagoon-deep)]" />
+                Tren IPS Akademik
+              </h3>
+              <p className="text-xs text-[var(--sea-ink-soft)] font-medium mt-0.5">
+                Perkembangan indeks prestasi semester Anda dari waktu ke waktu.
+              </p>
+            </div>
+            <Link
+              to="/mahasiswa/khs"
+              className="text-xs font-bold text-[var(--lagoon-deep)] hover:underline flex items-center gap-1"
+            >
+              Lihat KHS Lengkap →
+            </Link>
+          </div>
+          <IpsChart data={ipsTrend} />
+        </div>
+      )}
+
+      {/* Main Grid: Schedule + Announcements */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Left Side: Today's Schedule (2 cols wide) */}
+
+        {/* Today's Schedule (2 cols wide) */}
         <div className="lg:col-span-2 flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <h3 className="display-title text-xl font-bold flex items-center gap-2">
@@ -75,8 +100,8 @@ function DashboardPage() {
           {todaySchedule.length > 0 ? (
             <div className="flex flex-col gap-4">
               {todaySchedule.map((classItem) => (
-                <div 
-                  key={classItem.id} 
+                <div
+                  key={classItem.id}
                   className="demo-card border border-[var(--line)] hover:border-[var(--lagoon-deep)] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5"
                 >
                   <div className="flex items-start gap-4">
@@ -124,7 +149,7 @@ function DashboardPage() {
           )}
         </div>
 
-        {/* Right Side: Announcements (1 col wide) */}
+        {/* Announcements (1 col wide) */}
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <h3 className="display-title text-xl font-bold flex items-center gap-2">
@@ -142,15 +167,15 @@ function DashboardPage() {
           <div className="flex flex-col gap-4">
             {announcements.length > 0 ? (
               announcements.map((ann) => (
-                <div 
-                  key={ann.id} 
+                <div
+                  key={ann.id}
                   className="demo-card border border-[var(--line)] bg-[var(--surface-strong)] flex flex-col justify-between gap-3.5 p-5 relative"
                 >
-                  {/* Unread indicator */}
+                  {/* Unread dot */}
                   {!ann.read && (
                     <span className="absolute top-4 right-4 flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
                     </span>
                   )}
 

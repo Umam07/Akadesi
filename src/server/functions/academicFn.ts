@@ -88,11 +88,49 @@ export const getDashboardData = createServerFn({ method: 'GET' })
       read: readIds.has(ann.id)
     }))
 
+    // Fetch IPS trend for mini chart on dashboard
+    const allKhsForTrend = await db
+      .select({
+        semesterAjaran: khs.semesterAjaran,
+        bobot: khs.bobot,
+        sks: mataKuliah.sks,
+      })
+      .from(khs)
+      .innerJoin(mataKuliah, eq(khs.mataKuliahId, mataKuliah.id))
+      .where(eq(khs.mahasiswaId, studentId))
+
+    // Compute IPS per semester
+    const semMap = new Map<string, { totalQP: number; totalSks: number }>()
+    for (const r of allKhsForTrend) {
+      if (!semMap.has(r.semesterAjaran)) {
+        semMap.set(r.semesterAjaran, { totalQP: 0, totalSks: 0 })
+      }
+      const s = semMap.get(r.semesterAjaran)!
+      s.totalQP += r.bobot * r.sks
+      s.totalSks += r.sks
+    }
+
+    const semOrder = (semName: string) => {
+      const parts = semName.split(' ')
+      const years = parts[0].split('/')
+      const semType = parts[1] === 'Ganjil' ? 1 : 2
+      return parseInt(years[0], 10) * 10 + semType
+    }
+
+    const ipsTrend = Array.from(semMap.entries())
+      .map(([semesterAjaran, { totalQP, totalSks }]) => ({
+        semesterAjaran,
+        ips: totalSks > 0 ? parseFloat((totalQP / totalSks).toFixed(2)) : 0,
+        totalSks,
+      }))
+      .sort((a, b) => semOrder(a.semesterAjaran) - semOrder(b.semesterAjaran))
+
     return {
       student: studentInfo,
       todaySchedule,
       announcements,
       todayDayName: todayIndo,
+      ipsTrend,
     }
   })
 
