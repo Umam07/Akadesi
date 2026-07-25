@@ -2,6 +2,7 @@ import { createFileRoute, useRouter, redirect, isRedirect } from '@tanstack/reac
 import { loginFn } from '../server/functions/loginFn'
 import { getAuthSession } from '../server/functions/authFn'
 import { useState } from 'react'
+import AkadesiLogo from '../components/AkadesiLogo'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: async () => {
@@ -50,19 +51,18 @@ function LoginPage() {
           
           {/* Left Column: Form Login */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="text-center lg:text-left space-y-3 px-2">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--chip-bg)] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[var(--sea-ink-soft)] border border-[var(--line)]">
-                <svg className="h-3 w-3 text-[var(--lagoon-deep)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-                Sistem Akademik
+            <div className="flex flex-col items-center lg:items-start space-y-3.5 px-2">
+              <div className="flex items-center">
+                <AkadesiLogo size={44} variant="full" showSubtitle={true} />
               </div>
-              <h2 className="text-3xl font-extrabold text-[var(--sea-ink)] tracking-tight display-title">
-                Masuk ke Akadesi
-              </h2>
-              <p className="text-sm text-[var(--sea-ink-soft)] font-medium">
-                Portal Mahasiswa Modern Universitas YARSI
-              </p>
+              <div>
+                <h2 className="text-3xl font-extrabold text-[var(--sea-ink)] tracking-tight display-title">
+                  Masuk ke Akadesi
+                </h2>
+                <p className="text-sm text-[var(--sea-ink-soft)] font-medium mt-1">
+                  Portal Mahasiswa Modern Universitas YARSI
+                </p>
+              </div>
             </div>
 
             <div className="bg-[var(--surface-strong)] py-8 px-6 border border-[var(--line)] rounded-2xl shadow-xl backdrop-blur-sm transition-colors duration-200">
