@@ -2,6 +2,10 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
+if (typeof process.loadEnvFile === 'function') {
+  try { process.loadEnvFile('.env'); } catch {}
+}
+
 const connectionString = process.env.DATABASE_URL || import.meta.env?.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/akadesi';
 
 console.log('DB CONNECTION TARGET:', connectionString.includes('@') ? connectionString.split('@')[1] : 'localhost/default');
