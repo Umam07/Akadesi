@@ -2,6 +2,7 @@ import { Link, useRouter, useLocation, isRedirect } from '@tanstack/react-router
 import type { UserSession } from '../lib/auth'
 import { logoutFn } from '../server/functions/logoutFn'
 import { useState, useRef, useEffect } from 'react'
+import AkadesiLogo from './AkadesiLogo'
 import {
   LayoutDashboard,
   CalendarDays,
@@ -143,37 +144,10 @@ export default function Header({ session }: HeaderProps) {
         {/* Brand Logo */}
         <Link
           to="/"
-          className="group inline-flex items-center gap-2 no-underline z-10"
+          className="z-10 no-underline"
           style={{ textDecoration: 'none' }}
         >
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 9,
-              background: 'var(--sea-ink)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              transition: 'transform 180ms ease',
-            }}
-            className="group-hover:scale-95"
-          >
-            <ShieldCheck size={17} strokeWidth={2.5} color="var(--sand)" />
-          </div>
-          <span
-            style={{
-              fontFamily: 'Fraunces, Georgia, serif',
-              fontWeight: 700,
-              fontSize: 17,
-              color: 'var(--sea-ink)',
-              letterSpacing: '-0.02em',
-              lineHeight: 1,
-            }}
-          >
-            Akadesi
-          </span>
+          <AkadesiLogo size={34} variant="full" showSubtitle={true} />
         </Link>
 
         {/* Desktop Nav Links (Grouped, Centered) */}
