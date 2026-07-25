@@ -15,6 +15,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedMahasiswaDashboardRouteImport } from './routes/_authenticated/mahasiswa/dashboard'
 import { Route as AuthenticatedMahasiswaJadwalRouteImport } from './routes/_authenticated/mahasiswa/jadwal'
+import { Route as AuthenticatedMahasiswaKeuanganRouteImport } from './routes/_authenticated/mahasiswa/keuangan'
 import { Route as AuthenticatedMahasiswaKhsRouteImport } from './routes/_authenticated/mahasiswa/khs'
 import { Route as AuthenticatedMahasiswaKrsRouteImport } from './routes/_authenticated/mahasiswa/krs'
 import { Route as AuthenticatedMahasiswaMatakuliahRouteImport } from './routes/_authenticated/mahasiswa/matakuliah'
@@ -50,6 +51,12 @@ const AuthenticatedMahasiswaJadwalRoute =
   AuthenticatedMahasiswaJadwalRouteImport.update({
     id: '/mahasiswa/jadwal',
     path: '/mahasiswa/jadwal',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMahasiswaKeuanganRoute =
+  AuthenticatedMahasiswaKeuanganRouteImport.update({
+    id: '/mahasiswa/keuangan',
+    path: '/mahasiswa/keuangan',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedMahasiswaKhsRoute =
@@ -89,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/mahasiswa/dashboard': typeof AuthenticatedMahasiswaDashboardRoute
   '/mahasiswa/jadwal': typeof AuthenticatedMahasiswaJadwalRoute
+  '/mahasiswa/keuangan': typeof AuthenticatedMahasiswaKeuanganRoute
   '/mahasiswa/khs': typeof AuthenticatedMahasiswaKhsRoute
   '/mahasiswa/krs': typeof AuthenticatedMahasiswaKrsRoute
   '/mahasiswa/matakuliah': typeof AuthenticatedMahasiswaMatakuliahRoute
@@ -101,6 +109,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/mahasiswa/dashboard': typeof AuthenticatedMahasiswaDashboardRoute
   '/mahasiswa/jadwal': typeof AuthenticatedMahasiswaJadwalRoute
+  '/mahasiswa/keuangan': typeof AuthenticatedMahasiswaKeuanganRoute
   '/mahasiswa/khs': typeof AuthenticatedMahasiswaKhsRoute
   '/mahasiswa/krs': typeof AuthenticatedMahasiswaKrsRoute
   '/mahasiswa/matakuliah': typeof AuthenticatedMahasiswaMatakuliahRoute
@@ -115,6 +124,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/mahasiswa/dashboard': typeof AuthenticatedMahasiswaDashboardRoute
   '/_authenticated/mahasiswa/jadwal': typeof AuthenticatedMahasiswaJadwalRoute
+  '/_authenticated/mahasiswa/keuangan': typeof AuthenticatedMahasiswaKeuanganRoute
   '/_authenticated/mahasiswa/khs': typeof AuthenticatedMahasiswaKhsRoute
   '/_authenticated/mahasiswa/krs': typeof AuthenticatedMahasiswaKrsRoute
   '/_authenticated/mahasiswa/matakuliah': typeof AuthenticatedMahasiswaMatakuliahRoute
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mahasiswa/dashboard'
     | '/mahasiswa/jadwal'
+    | '/mahasiswa/keuangan'
     | '/mahasiswa/khs'
     | '/mahasiswa/krs'
     | '/mahasiswa/matakuliah'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mahasiswa/dashboard'
     | '/mahasiswa/jadwal'
+    | '/mahasiswa/keuangan'
     | '/mahasiswa/khs'
     | '/mahasiswa/krs'
     | '/mahasiswa/matakuliah'
@@ -154,6 +166,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/mahasiswa/dashboard'
     | '/_authenticated/mahasiswa/jadwal'
+    | '/_authenticated/mahasiswa/keuangan'
     | '/_authenticated/mahasiswa/khs'
     | '/_authenticated/mahasiswa/krs'
     | '/_authenticated/mahasiswa/matakuliah'
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMahasiswaJadwalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/mahasiswa/keuangan': {
+      id: '/_authenticated/mahasiswa/keuangan'
+      path: '/mahasiswa/keuangan'
+      fullPath: '/mahasiswa/keuangan'
+      preLoaderRoute: typeof AuthenticatedMahasiswaKeuanganRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/mahasiswa/khs': {
       id: '/_authenticated/mahasiswa/khs'
       path: '/mahasiswa/khs'
@@ -253,6 +273,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedMahasiswaDashboardRoute: typeof AuthenticatedMahasiswaDashboardRoute
   AuthenticatedMahasiswaJadwalRoute: typeof AuthenticatedMahasiswaJadwalRoute
+  AuthenticatedMahasiswaKeuanganRoute: typeof AuthenticatedMahasiswaKeuanganRoute
   AuthenticatedMahasiswaKhsRoute: typeof AuthenticatedMahasiswaKhsRoute
   AuthenticatedMahasiswaKrsRoute: typeof AuthenticatedMahasiswaKrsRoute
   AuthenticatedMahasiswaMatakuliahRoute: typeof AuthenticatedMahasiswaMatakuliahRoute
@@ -263,6 +284,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMahasiswaDashboardRoute: AuthenticatedMahasiswaDashboardRoute,
   AuthenticatedMahasiswaJadwalRoute: AuthenticatedMahasiswaJadwalRoute,
+  AuthenticatedMahasiswaKeuanganRoute: AuthenticatedMahasiswaKeuanganRoute,
   AuthenticatedMahasiswaKhsRoute: AuthenticatedMahasiswaKhsRoute,
   AuthenticatedMahasiswaKrsRoute: AuthenticatedMahasiswaKrsRoute,
   AuthenticatedMahasiswaMatakuliahRoute: AuthenticatedMahasiswaMatakuliahRoute,
