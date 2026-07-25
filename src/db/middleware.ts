@@ -1,50 +1,59 @@
 import { createMiddleware } from '@tanstack/react-start';
 
-// Load .env file in Node environment (local dev) if DATABASE_URL is not set
-if (typeof process !== 'undefined' && typeof process.loadEnvFile === 'function') {
-  try {
-    process.loadEnvFile('.env');
-  } catch {
-    // Ignore error if .env file is missing
+/**
+ * Mendapatkan DATABASE_URL per-request (bukan module level).
+ *
+ * Pada Cloudflare Workers dengan nodejs_compat, vars dari wrangler.jsonc dan
+ * .dev.vars tersedia via process.env HANYA di dalam handler (per-request).
+ *
+ * Di Node.js lokal (vite dev tanpa Cloudflare plugin), .env di-load manual
+ * dan process.env bekerja normal.
+ */
+function getDbUrl(): string {
+  // Load .env di Node environment (hanya di lokal dev, tidak ada efek di Workers)
+  if (typeof process !== 'undefined' && typeof process.loadEnvFile === 'function') {
+    try { process.loadEnvFile('.env'); } catch { /* ignore */ }
   }
+
+  const url = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
+  if (url) return url;
+
+  console.warn('[dbMiddleware] DATABASE_URL tidak ditemukan. Menggunakan fallback localhost.');
+  return 'postgresql://postgres:postgres@localhost:5432/akadesi';
 }
 
 export const dbMiddleware = createMiddleware()
   .server(async ({ next }) => {
-    let connectionString = process.env.DATABASE_URL || import.meta.env?.DATABASE_URL || process.env.VITE_DATABASE_URL;
+    const connectionString = getDbUrl();
 
-    if (!connectionString) {
-      try {
-        const cfWorkers = await import('cloudflare:workers');
-        connectionString = (cfWorkers.env?.DATABASE_URL || cfWorkers.env?.VITE_DATABASE_URL) as string | undefined;
-      } catch {
-        // Fallback if not running inside Cloudflare Workers
-      }
-    }
-
-    if (!connectionString) {
-      connectionString = 'postgresql://postgres:postgres@localhost:5432/akadesi';
-    }
-
-    // Dynamically import server-only database modules to prevent bundling them on the client
+    // Import server-only modules secara dinamis agar tidak di-bundle ke client
     const { drizzle } = await import('drizzle-orm/postgres-js');
     const postgres = (await import('postgres')).default;
     const schema = await import('./schema');
 
     const isLocal = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
-    const requestClient = postgres(connectionString, {
-      prepare: false,
-      ssl: isLocal ? false : 'require',
-    });
-    const requestDb = drizzle(requestClient, { schema });
+
+    let requestClient: ReturnType<typeof postgres> | undefined;
     try {
+      requestClient = postgres(connectionString, {
+        prepare: false,
+        // Untuk Supabase: gunakan ssl dengan rejectUnauthorized: false
+        // karena Supabase pooler menggunakan self-signed cert atau cert chain berbeda
+        ssl: isLocal ? false : { rejectUnauthorized: false },
+        connect_timeout: 15,
+        idle_timeout: 20,
+        max_lifetime: 60 * 5,
+      });
+
+      const requestDb = drizzle(requestClient, { schema });
       const result = await next({
-        context: {
-          db: requestDb
-        }
+        context: { db: requestDb }
       });
       return result;
     } finally {
-      await requestClient.end();
+      if (requestClient) {
+        // Tutup koneksi setelah request selesai
+        await requestClient.end({ timeout: 5 }).catch(() => { /* ignore cleanup errors */ });
+      }
     }
   });

@@ -4,8 +4,8 @@ import { dbMiddleware } from '../../db/middleware'
 import { mahasiswa } from '../../db/schema'
 import { eq } from 'drizzle-orm'
 
+// getAuthSession: Hanya membaca cookie session, TIDAK butuh koneksi DB
 export const getAuthSession = createServerFn({ method: 'GET' })
-  .middleware([dbMiddleware])
   .handler(async () => {
     return getSession()
   })
