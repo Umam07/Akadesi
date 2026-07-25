@@ -57,7 +57,7 @@ export function AvatarInitial({ name }: { name: string }) {
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
-        fontFamily: 'Manrope, sans-serif',
+        fontFamily: 'Inter, sans-serif',
         fontSize: 13,
         fontWeight: 800,
         color: `hsl(${hue}, 40%, 28%)`,

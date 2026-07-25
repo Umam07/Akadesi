@@ -62,7 +62,7 @@ function CustomTooltip({ active, payload, label }: TooltipContentProps) {
         padding: '0.75rem 1rem',
         boxShadow: '0 8px 24px rgba(23,58,64,0.12)',
         minWidth: 160,
-        fontFamily: 'Manrope, sans-serif',
+        fontFamily: 'Inter, sans-serif',
       }}
     >
       <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: '#416166', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -110,14 +110,14 @@ export function IpsChart({ data }: IpsChartProps) {
         />
         <XAxis
           dataKey="label"
-          tick={{ fontSize: 11, fontWeight: 600, fill: '#416166', fontFamily: 'Manrope, sans-serif' }}
+          tick={{ fontSize: 11, fontWeight: 600, fill: '#416166', fontFamily: 'Inter, sans-serif' }}
           axisLine={false}
           tickLine={false}
         />
         <YAxis
           domain={[0, 4]}
           ticks={[0, 1, 2, 3, 4]}
-          tick={{ fontSize: 10, fill: '#416166', fontFamily: 'Manrope, sans-serif' }}
+          tick={{ fontSize: 10, fill: '#416166', fontFamily: 'Inter, sans-serif' }}
           axisLine={false}
           tickLine={false}
         />

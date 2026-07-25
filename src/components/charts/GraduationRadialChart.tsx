@@ -46,7 +46,7 @@ export function GraduationRadialChart({ totalSksLulus, targetSks }: GraduationRa
         {/* Center label overlay */}
         <div
           className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
-          style={{ fontFamily: 'Manrope, sans-serif' }}
+          style={{ fontFamily: 'Inter, sans-serif' }}
         >
           <span
             style={{ fontSize: 28, fontWeight: 800, color: '#173a40', lineHeight: 1 }}
