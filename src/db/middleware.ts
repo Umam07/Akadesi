@@ -2,14 +2,31 @@ import { createMiddleware } from '@tanstack/react-start';
 
 export const dbMiddleware = createMiddleware()
   .server(async ({ next }) => {
-    const connectionString = process.env.DATABASE_URL || import.meta.env?.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/akadesi';
+    let connectionString = process.env.DATABASE_URL || import.meta.env?.DATABASE_URL;
+
+    if (!connectionString) {
+      try {
+        const cfWorkers = await import('cloudflare:workers');
+        connectionString = cfWorkers.env?.DATABASE_URL as string | undefined;
+      } catch {
+        // Fallback if not running inside Cloudflare Workers
+      }
+    }
+
+    if (!connectionString) {
+      connectionString = 'postgresql://postgres:postgres@localhost:5432/akadesi';
+    }
 
     // Dynamically import server-only database modules to prevent bundling them on the client
     const { drizzle } = await import('drizzle-orm/postgres-js');
     const postgres = (await import('postgres')).default;
     const schema = await import('./schema');
 
-    const requestClient = postgres(connectionString, { prepare: false });
+    const isLocal = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+    const requestClient = postgres(connectionString, {
+      prepare: false,
+      ssl: isLocal ? false : 'require',
+    });
     const requestDb = drizzle(requestClient, { schema });
     try {
       const result = await next({
