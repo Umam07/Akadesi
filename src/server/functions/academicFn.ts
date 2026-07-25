@@ -137,6 +137,24 @@ export const getDashboardData = createServerFn({ method: 'GET' })
   })
 
 // 2. Weekly Schedule Function
+export interface ExamScheduleItem {
+  id: string
+  kodeMk: string
+  namaMk: string
+  sks: number
+  namaDosen: string
+  tanggal: string
+  jamMulai: string
+  jamSelesai: string
+  ruangan: string
+  nomorKursi: string
+  sifatUjian: 'Tutup Buku' | 'Buka Buku' | 'Praktikum' | 'Take Home'
+  status: 'selesai' | 'hari_ini' | 'mendatang'
+  pengawas: string
+  catatan?: string
+}
+
+// 2. Weekly Schedule & Exam Schedule Function
 export const getJadwalData = createServerFn({ method: 'GET' })
   .middleware([dbMiddleware])
   .handler(async ({ context }) => {
@@ -167,8 +185,94 @@ export const getJadwalData = createServerFn({ method: 'GET' })
         )
       )
 
+    // Generate UTS Schedule derived from student's active courses
+    const utsDates = [
+      { hari: 'Senin', tgl: '13 April 2026', time: '08:00', endTime: '09:40' },
+      { hari: 'Selasa', tgl: '14 April 2026', time: '10:00', endTime: '11:40' },
+      { hari: 'Rabu', tgl: '15 April 2026', time: '13:00', endTime: '14:40' },
+      { hari: 'Kamis', tgl: '16 April 2026', time: '08:00', endTime: '09:40' },
+      { hari: 'Jumat', tgl: '17 April 2026', time: '09:00', endTime: '10:40' },
+    ]
+
+    const sifatList: ('Tutup Buku' | 'Buka Buku' | 'Praktikum' | 'Take Home')[] = [
+      'Tutup Buku',
+      'Buka Buku',
+      'Praktikum',
+      'Take Home'
+    ]
+
+    const utsSchedule: ExamScheduleItem[] = weeklySchedule.map((item, index) => {
+      const dateInfo = utsDates[index % utsDates.length]
+      const sifat = item.namaMk.toLowerCase().includes('praktikum') || item.namaMk.toLowerCase().includes('lab')
+        ? 'Praktikum'
+        : sifatList[index % sifatList.length]
+      
+      const seatNum = `${String.fromCharCode(65 + (index % 4))}-${String(12 + index * 3).padStart(2, '0')}`
+
+      return {
+        id: `uts-${item.id}`,
+        kodeMk: item.kodeMk,
+        namaMk: item.namaMk,
+        sks: item.sks,
+        namaDosen: item.namaDosen,
+        tanggal: `${dateInfo.hari}, ${dateInfo.tgl}`,
+        jamMulai: dateInfo.time,
+        jamSelesai: dateInfo.endTime,
+        ruangan: item.ruangan,
+        nomorKursi: seatNum,
+        sifatUjian: sifat,
+        status: 'selesai' as const,
+        pengawas: `${item.namaDosen} & Tim Pengawas FST`,
+        catatan: sifat === 'Praktikum' ? 'Bawa Laptop / Flashdisk' : 'Hadir 15 menit sebelum ujian'
+      }
+    })
+
+    // Generate UAS Schedule derived from student's active courses
+    const uasDates = [
+      { hari: 'Senin', tgl: '22 Juni 2026', time: '08:00', endTime: '10:00' },
+      { hari: 'Selasa', tgl: '23 Juni 2026', time: '10:15', endTime: '12:15' },
+      { hari: 'Rabu', tgl: '24 Juni 2026', time: '13:00', endTime: '15:00' },
+      { hari: 'Kamis', tgl: '25 Juni 2026', time: '08:00', endTime: '10:00' },
+      { hari: 'Jumat', tgl: '26 Juni 2026', time: '09:00', endTime: '11:00' },
+    ]
+
+    const uasSchedule: ExamScheduleItem[] = weeklySchedule.map((item, index) => {
+      const dateInfo = uasDates[index % uasDates.length]
+      const sifat = item.namaMk.toLowerCase().includes('praktikum') || item.namaMk.toLowerCase().includes('lab')
+        ? 'Praktikum'
+        : sifatList[(index + 1) % sifatList.length]
+      
+      const seatNum = `${String.fromCharCode(65 + ((index + 1) % 4))}-${String(15 + index * 2).padStart(2, '0')}`
+
+      return {
+        id: `uas-${item.id}`,
+        kodeMk: item.kodeMk,
+        namaMk: item.namaMk,
+        sks: item.sks,
+        namaDosen: item.namaDosen,
+        tanggal: `${dateInfo.hari}, ${dateInfo.tgl}`,
+        jamMulai: dateInfo.time,
+        jamSelesai: dateInfo.endTime,
+        ruangan: item.ruangan,
+        nomorKursi: seatNum,
+        sifatUjian: sifat,
+        status: (index === 0 ? 'hari_ini' : 'mendatang') as 'hari_ini' | 'mendatang',
+        pengawas: `${item.namaDosen} & Pengawas Ruang`,
+        catatan: 'Wajib membawa Kartu Peserta Ujian fisik / digital'
+      }
+    })
+
     return {
-      schedule: weeklySchedule
+      schedule: weeklySchedule,
+      utsSchedule,
+      uasSchedule,
+      examPeriodInfo: {
+        utsPeriod: '13 - 17 April 2026',
+        uasPeriod: '22 - 26 Juni 2026',
+        isExamCardReady: true,
+        attendancePercentage: 94,
+        paymentStatus: 'Lunas'
+      }
     }
   })
 
