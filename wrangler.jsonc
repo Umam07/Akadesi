@@ -2,5 +2,8 @@
   "name": "akadesi",
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "@tanstack/react-start/server-entry"
+  "main": "@tanstack/react-start/server-entry",
+  "vars": {
+    "DATABASE_URL": "postgresql://postgres.azaewrgasvzcvbdxrupw:ww6LSWs5qnJY0mYB@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+  }
 }
