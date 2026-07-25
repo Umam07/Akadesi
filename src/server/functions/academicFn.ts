@@ -154,6 +154,19 @@ export interface ExamScheduleItem {
   catatan?: string
 }
 
+export interface AcademicMilestone {
+  id: string
+  judul: string
+  kategori: 'perkuliahan' | 'edom' | 'ujian' | 'administrasi'
+  tanggalMulai: string
+  tanggalSelesai: string
+  rentangTanggal: string
+  deskripsi: string
+  status: 'selesai' | 'berlangsung' | 'mendatang'
+  urgensi?: 'normal' | 'penting' | 'kritis'
+  catatan?: string
+}
+
 // 2. Weekly Schedule & Exam Schedule Function
 export const getJadwalData = createServerFn({ method: 'GET' })
   .middleware([dbMiddleware])
@@ -262,10 +275,116 @@ export const getJadwalData = createServerFn({ method: 'GET' })
       }
     })
 
+    // Comprehensive Academic Calendar Milestones
+    const kalenderAkademik: AcademicMilestone[] = [
+      {
+        id: 'cal-1',
+        judul: 'Perkuliahan Pra UTS',
+        kategori: 'perkuliahan',
+        tanggalMulai: '2026-02-23',
+        tanggalSelesai: '2026-04-10',
+        rentangTanggal: '23 Feb – 10 Apr 2026',
+        deskripsi: 'Masa tatap muka perkuliahan babak pertama (Pertemuan 1 s.d. 7).',
+        status: 'selesai',
+        urgensi: 'normal'
+      },
+      {
+        id: 'cal-2',
+        judul: 'EDoM Pra UTS',
+        kategori: 'edom',
+        tanggalMulai: '2026-03-30',
+        tanggalSelesai: '2026-04-10',
+        rentangTanggal: '30 Mar – 10 Apr 2026',
+        deskripsi: 'Pengisian Evaluasi Dosen oleh Mahasiswa periode awal sebagai syarat cetak Kartu UTS.',
+        status: 'selesai',
+        urgensi: 'penting'
+      },
+      {
+        id: 'cal-3',
+        judul: 'Ujian Tengah Semester (UTS)',
+        kategori: 'ujian',
+        tanggalMulai: '2026-04-13',
+        tanggalSelesai: '2026-04-17',
+        rentangTanggal: '13 Apr – 17 Apr 2026',
+        deskripsi: 'Pelaksanaan ujian tengah semester untuk seluruh mata kuliah aktif.',
+        status: 'selesai',
+        urgensi: 'kritis'
+      },
+      {
+        id: 'cal-4',
+        judul: 'Perkuliahan Pasca UTS',
+        kategori: 'perkuliahan',
+        tanggalMulai: '2026-04-20',
+        tanggalSelesai: '2026-06-12',
+        rentangTanggal: '20 Apr – 12 Jun 2026',
+        deskripsi: 'Masa tatap muka perkuliahan babak kedua (Pertemuan 8 s.d. 14).',
+        status: 'berlangsung',
+        urgensi: 'normal',
+        catatan: 'Minggu ke-12 perkuliahan aktif'
+      },
+      {
+        id: 'cal-5',
+        judul: 'EDoM Pra UAS',
+        kategori: 'edom',
+        tanggalMulai: '2026-06-01',
+        tanggalSelesai: '2026-06-19',
+        rentangTanggal: '01 Jun – 19 Jun 2026',
+        deskripsi: 'Pengisian Evaluasi Dosen oleh Mahasiswa periode akhir sebagai syarat cetak Kartu UAS.',
+        status: 'berlangsung',
+        urgensi: 'penting',
+        catatan: 'Batas akhir pengisian 19 Juni'
+      },
+      {
+        id: 'cal-6',
+        judul: 'Ujian Akhir Semester (UAS)',
+        kategori: 'ujian',
+        tanggalMulai: '2026-06-22',
+        tanggalSelesai: '2026-06-26',
+        rentangTanggal: '22 Jun – 26 Jun 2026',
+        deskripsi: 'Pelaksanaan ujian akhir semester evaluasi capaian pembelajaran.',
+        status: 'mendatang',
+        urgensi: 'kritis'
+      },
+      {
+        id: 'cal-7',
+        judul: 'Ujian Perbaikan (Remedial)',
+        kategori: 'ujian',
+        tanggalMulai: '2026-06-29',
+        tanggalSelesai: '2026-07-03',
+        rentangTanggal: '29 Jun – 03 Jul 2026',
+        deskripsi: 'Periode ujian susulan dan perbaikan bagi mahasiswa yang terdaftar.',
+        status: 'mendatang',
+        urgensi: 'penting'
+      },
+      {
+        id: 'cal-8',
+        judul: 'Pengisian Nilai oleh KPS',
+        kategori: 'administrasi',
+        tanggalMulai: '2026-07-06',
+        tanggalSelesai: '2026-07-10',
+        rentangTanggal: '06 Jul – 10 Jul 2026',
+        deskripsi: 'Finalisasi & verifikasi entri nilai semester oleh Ketua Program Studi & Dosen.',
+        status: 'mendatang',
+        urgensi: 'normal'
+      },
+      {
+        id: 'cal-9',
+        judul: 'Pengumuman KHS',
+        kategori: 'administrasi',
+        tanggalMulai: '2026-07-13',
+        tanggalSelesai: '2026-07-13',
+        rentangTanggal: '13 Juli 2026',
+        deskripsi: 'Penerbitan resmi Kartu Hasil Studi (KHS) Semester Genap 2025/2026.',
+        status: 'mendatang',
+        urgensi: 'kritis'
+      }
+    ]
+
     return {
       schedule: weeklySchedule,
       utsSchedule,
       uasSchedule,
+      kalenderAkademik,
       examPeriodInfo: {
         utsPeriod: '13 - 17 April 2026',
         uasPeriod: '22 - 26 Juni 2026',

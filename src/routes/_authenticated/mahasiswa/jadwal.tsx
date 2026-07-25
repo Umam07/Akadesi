@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getJadwalData, type ExamScheduleItem } from '../../../server/functions/academicFn'
+import { getJadwalData, type ExamScheduleItem, type AcademicMilestone } from '../../../server/functions/academicFn'
 import { useState, useMemo } from 'react'
 import { 
   MapPin, 
@@ -22,7 +22,13 @@ import {
   AlertCircle,
   Armchair,
   FileCheck2,
-  BadgeInfo
+  BadgeInfo,
+  CalendarRange,
+  Milestone,
+  Check,
+  Flame,
+  Download,
+  CalendarCheck2
 } from 'lucide-react'
 
 export const Route = createFileRoute('/_authenticated/mahasiswa/jadwal')({
@@ -82,14 +88,18 @@ function getAvatarColor(name: string) {
 
 function JadwalPage() {
   const loaderData = Route.useLoaderData()
-  const { schedule, utsSchedule = [], uasSchedule = [], examPeriodInfo } = loaderData
+  const { schedule, utsSchedule = [], uasSchedule = [], kalenderAkademik = [], examPeriodInfo } = loaderData
 
-  // Category switch: 'rutin' | 'uts' | 'uas'
-  const [scheduleType, setScheduleType] = useState<'rutin' | 'uts' | 'uas'>('rutin')
+  // Category switch: 'rutin' | 'uts' | 'uas' | 'kalender'
+  const [scheduleType, setScheduleType] = useState<'rutin' | 'uts' | 'uas' | 'kalender'>('rutin')
 
   // Search & Filter for UTS/UAS
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'semua' | 'hari_ini' | 'mendatang' | 'selesai'>('semua')
+  
+  // Filter for Kalender Akademik
+  const [calendarCategory, setCalendarCategory] = useState<'semua' | 'perkuliahan' | 'edom' | 'ujian' | 'administrasi'>('semua')
+
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   // Routine schedule state
@@ -102,9 +112,9 @@ function JadwalPage() {
   
   const [viewMode, setViewMode] = useState<'harian' | 'mingguan'>('harian')
 
-  // Handle toast notification for printing exam card
-  const handlePrintCard = (type: 'UTS' | 'UAS') => {
-    setToastMessage(`Kartu Peserta Ujian ${type} Semester Genap 2025/2026 berhasil disiapkan untuk dicetak!`)
+  // Handle toast notification
+  const showToast = (msg: string) => {
+    setToastMessage(msg)
     setTimeout(() => {
       setToastMessage(null)
     }, 4000)
@@ -179,6 +189,12 @@ function JadwalPage() {
       return matchSearch && matchStatus
     })
   }, [scheduleType, utsSchedule, uasSchedule, searchQuery, statusFilter])
+
+  // Filtered Academic Calendar
+  const filteredKalender = useMemo(() => {
+    if (calendarCategory === 'semua') return kalenderAkademik
+    return kalenderAkademik.filter(m => m.kategori === calendarCategory)
+  }, [kalenderAkademik, calendarCategory])
 
   // RenderRoutineCard Component
   const renderClassCard = (classItem: typeof schedule[0], showDayBadge = false) => {
@@ -291,7 +307,6 @@ function JadwalPage() {
 
   // Render Exam Card (UTS / UAS)
   const renderExamCard = (exam: ExamScheduleItem) => {
-    // Sifat Ujian Color Badge
     let sifatStyle = 'bg-slate-100 text-slate-700 border-slate-200'
     if (exam.sifatUjian === 'Tutup Buku') {
       sifatStyle = 'bg-rose-50 text-rose-700 border-rose-200'
@@ -303,7 +318,6 @@ function JadwalPage() {
       sifatStyle = 'bg-amber-50 text-amber-700 border-amber-200'
     }
 
-    // Status Badge
     let statusBadge = (
       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200">
         <Clock className="h-3 w-3 text-sky-500" />
@@ -333,7 +347,6 @@ function JadwalPage() {
         className="demo-card flex flex-col justify-between p-5 rounded-2xl border border-[var(--line)]/60 bg-gradient-to-br from-white via-white to-[var(--sand)]/20 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 gap-4"
       >
         <div>
-          {/* Header Row: Date & Status */}
           <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[var(--line)]/40">
             <div className="flex items-center gap-2 text-xs font-bold text-[var(--sea-ink)]">
               <CalendarDays className="h-4 w-4 text-[var(--lagoon-deep)]" />
@@ -342,7 +355,6 @@ function JadwalPage() {
             {statusBadge}
           </div>
 
-          {/* Course Info */}
           <div className="mt-3">
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--sea-ink-soft)] bg-[var(--chip-bg)] px-2 py-0.5 rounded border border-[var(--chip-line)]">
@@ -358,9 +370,7 @@ function JadwalPage() {
             </h3>
           </div>
 
-          {/* Time & Room & Seat Grid */}
           <div className="mt-4 grid grid-cols-2 gap-2.5">
-            {/* Time Slot */}
             <div className="bg-slate-50/80 border border-slate-100 p-2.5 rounded-xl flex flex-col justify-center">
               <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)]">Waktu Ujian</span>
               <span className="text-xs font-black text-[var(--sea-ink)] mt-0.5">
@@ -368,7 +378,6 @@ function JadwalPage() {
               </span>
             </div>
 
-            {/* Room Location */}
             <div className="bg-slate-50/80 border border-slate-100 p-2.5 rounded-xl flex flex-col justify-center">
               <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--sea-ink-soft)]">Ruang Ujian</span>
               <span className="text-xs font-black text-[var(--sea-ink)] mt-0.5 truncate flex items-center gap-1">
@@ -378,7 +387,6 @@ function JadwalPage() {
             </div>
           </div>
 
-          {/* Seat Number & Sifat Ujian Highlight */}
           <div className="mt-3 flex items-center justify-between gap-2 p-2.5 bg-[var(--foam)]/50 border border-[var(--chip-line)] rounded-xl">
             <div className="flex items-center gap-2">
               <Armchair className="h-4 w-4 text-[var(--sea-ink)]" />
@@ -394,7 +402,6 @@ function JadwalPage() {
           </div>
         </div>
 
-        {/* Card Footer: Invigilator & Note */}
         <div className="pt-3 border-t border-[var(--line)]/40 text-xs flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-[11px] text-[var(--sea-ink-soft)]">
             <span className="font-semibold">Pengawas:</span>
@@ -412,6 +419,92 @@ function JadwalPage() {
     )
   }
 
+  // Render Academic Milestone Card
+  const renderMilestoneCard = (milestone: AcademicMilestone, index: number) => {
+    let categoryBadge = 'bg-slate-100 text-slate-700 border-slate-200'
+    if (milestone.kategori === 'perkuliahan') {
+      categoryBadge = 'bg-sky-50 text-sky-800 border-sky-200'
+    } else if (milestone.kategori === 'edom') {
+      categoryBadge = 'bg-purple-50 text-purple-800 border-purple-200'
+    } else if (milestone.kategori === 'ujian') {
+      categoryBadge = 'bg-amber-50 text-amber-800 border-amber-200'
+    } else if (milestone.kategori === 'administrasi') {
+      categoryBadge = 'bg-emerald-50 text-emerald-800 border-emerald-200'
+    }
+
+    let statusPill = (
+      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+        <Clock className="h-3 w-3 text-slate-400" />
+        Mendatang
+      </span>
+    )
+
+    if (milestone.status === 'selesai') {
+      statusPill = (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <Check className="h-3 w-3 text-emerald-600" />
+          Selesai
+        </span>
+      )
+    } else if (milestone.status === 'berlangsung') {
+      statusPill = (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-800 border border-amber-300 animate-pulse">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-ping" />
+          Sedang Berlangsung
+        </span>
+      )
+    }
+
+    return (
+      <div 
+        key={milestone.id}
+        className={`demo-card relative p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between gap-4 ${
+          milestone.status === 'berlangsung'
+            ? 'bg-gradient-to-br from-white via-amber-50/10 to-amber-50/20 border-amber-300 shadow-md ring-2 ring-amber-400/30'
+            : 'bg-white/80 border-[var(--line)]/60 hover:shadow-md'
+        }`}
+      >
+        <div>
+          {/* Top Badge & Index */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-[var(--sea-ink)] text-white text-[10px] font-black flex items-center justify-center font-mono">
+                {index + 1}
+              </span>
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${categoryBadge}`}>
+                {milestone.kategori}
+              </span>
+            </div>
+            {statusPill}
+          </div>
+
+          {/* Date range header */}
+          <div className="mt-3.5 flex items-center gap-1.5 text-xs font-black text-[var(--lagoon-deep)] bg-[var(--foam)]/70 px-3 py-1.5 rounded-xl border border-[var(--chip-line)] w-fit">
+            <CalendarCheck2 className="h-3.5 w-3.5" />
+            <span>{milestone.rentangTanggal}</span>
+          </div>
+
+          {/* Title */}
+          <h3 className="text-base font-extrabold text-[var(--sea-ink)] mt-2.5 leading-snug">
+            {milestone.judul}
+          </h3>
+
+          <p className="text-xs text-[var(--sea-ink-soft)] mt-1.5 leading-relaxed font-medium">
+            {milestone.deskripsi}
+          </p>
+        </div>
+
+        {/* Card Footer: Urgensi & Notes */}
+        {milestone.catatan && (
+          <div className="pt-3 border-t border-[var(--line)]/40 flex items-center gap-1.5 text-[11px] font-medium text-amber-800 bg-amber-50/60 px-2.5 py-1 rounded-lg">
+            <Sparkles className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+            <span className="truncate">{milestone.catatan}</span>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="demo-page demo-page-wide flex flex-col gap-8 w-full rise-in">
       
@@ -425,11 +518,11 @@ function JadwalPage() {
 
       {/* 1. Primary Category Navigation Switcher */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-[var(--line)]/60 pb-4">
-        {/* Category Tabs (Rutinitas vs UTS vs UAS) */}
+        {/* Category Tabs (Rutinitas vs UTS vs UAS vs Kalender Akademik) */}
         <div className="inline-flex p-1.5 bg-white/70 border border-[var(--line)]/60 rounded-2xl shadow-sm gap-1 overflow-x-auto scrollbar-none">
           <button
             onClick={() => setScheduleType('rutin')}
-            className={`flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-extrabold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
               scheduleType === 'rutin'
                 ? 'bg-gradient-to-r from-[var(--sea-ink)] to-[#1b434a] text-white shadow-md'
                 : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/60'
@@ -441,7 +534,7 @@ function JadwalPage() {
 
           <button
             onClick={() => setScheduleType('uts')}
-            className={`flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-extrabold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
               scheduleType === 'uts'
                 ? 'bg-gradient-to-r from-[var(--sea-ink)] to-[#1b434a] text-white shadow-md'
                 : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/60'
@@ -458,7 +551,7 @@ function JadwalPage() {
 
           <button
             onClick={() => setScheduleType('uas')}
-            className={`flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-extrabold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
               scheduleType === 'uas'
                 ? 'bg-gradient-to-r from-[var(--sea-ink)] to-[#1b434a] text-white shadow-md'
                 : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/60'
@@ -471,6 +564,18 @@ function JadwalPage() {
             }`}>
               {uasSchedule.length}
             </span>
+          </button>
+
+          <button
+            onClick={() => setScheduleType('kalender')}
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-extrabold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+              scheduleType === 'kalender'
+                ? 'bg-gradient-to-r from-[var(--sea-ink)] to-[#1b434a] text-white shadow-md'
+                : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/60'
+            }`}
+          >
+            <CalendarRange className="h-4 w-4 text-violet-400" />
+            Kalender Akademik
           </button>
         </div>
 
@@ -523,6 +628,50 @@ function JadwalPage() {
             </div>
           </div>
         </div>
+      ) : scheduleType === 'kalender' ? (
+        /* KALENDER AKADEMIK HEADER BANNER */
+        <div className="demo-panel relative overflow-hidden flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 p-6 md:p-8">
+          <div className="relative z-10 flex gap-4 items-start">
+            <div className="bg-violet-50 text-violet-700 rounded-2xl p-4 shrink-0 shadow-sm border border-violet-200 flex items-center justify-center">
+              <CalendarRange className="h-8 w-8 text-violet-600" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full border bg-violet-100 text-violet-800 border-violet-200">
+                  Kalender Resmi
+                </span>
+                <span className="text-xs font-medium text-[var(--sea-ink-soft)]">
+                  Tahun Akademik <strong className="text-[var(--sea-ink)]">2025/2026 Genap</strong>
+                </span>
+              </div>
+
+              <h2 className="demo-title display-title text-2xl md:text-3xl font-extrabold text-[var(--sea-ink)] mt-2">
+                Kalender Akademik Semester
+              </h2>
+              <p className="mt-1 text-sm text-[var(--sea-ink-soft)] font-medium max-w-xl leading-relaxed">
+                Pantau seluruh tanggal penting dari perkuliahan Pra UTS, pengisian EDoM, jadwal ujian, perbaikan nilai, pengisian nilai KPS, hingga pengumuman KHS.
+              </p>
+            </div>
+          </div>
+
+          <div className="relative z-10 flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0 border-t lg:border-t-0 pt-4 lg:pt-0 border-[var(--line)]/40">
+            <div className="flex items-center gap-3 bg-white/70 border border-[var(--line)] px-4 py-2.5 rounded-2xl">
+              <Flame className="h-5 w-5 text-amber-500 shrink-0" />
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-[var(--sea-ink-soft)] uppercase tracking-wider">Tahap Aktif</span>
+                <span className="text-xs font-black text-amber-800">Pasca UTS & EDoM Pra UAS</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => showToast('Kalender Akademik 2025/2026 PDF berhasil diunduh!')}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-extrabold rounded-2xl bg-gradient-to-r from-[var(--sea-ink)] to-[#154147] text-white hover:shadow-lg transition-all cursor-pointer"
+            >
+              <Download className="h-4 w-4" />
+              Unduh Kalender PDF
+            </button>
+          </div>
+        </div>
       ) : (
         /* Exam Header Banner (UTS / UAS) */
         <div className="demo-panel relative overflow-hidden flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 p-6 md:p-8">
@@ -559,7 +708,6 @@ function JadwalPage() {
             </div>
           </div>
 
-          {/* Action & Eligibility Card */}
           <div className="relative z-10 flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0 border-t lg:border-t-0 pt-4 lg:pt-0 border-[var(--line)]/40">
             <div className="flex items-center gap-3 bg-white/70 border border-[var(--line)] px-4 py-2.5 rounded-2xl">
               <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0" />
@@ -570,7 +718,7 @@ function JadwalPage() {
             </div>
 
             <button
-              onClick={() => handlePrintCard(scheduleType === 'uts' ? 'UTS' : 'UAS')}
+              onClick={() => showToast(`Kartu Peserta Ujian ${scheduleType.toUpperCase()} berhasil disiapkan!`)}
               className="flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-extrabold rounded-2xl bg-gradient-to-r from-[var(--sea-ink)] to-[#154147] text-white hover:shadow-lg transition-all cursor-pointer"
             >
               <Printer className="h-4 w-4" />
@@ -729,13 +877,80 @@ function JadwalPage() {
             </div>
           )}
         </div>
+      ) : scheduleType === 'kalender' ? (
+        /* KALENDER AKADEMIK DISPLAY AREA */
+        <div className="flex flex-col gap-8">
+          
+          {/* Progress Bar Timeline Overview */}
+          <div className="demo-panel p-6 rounded-2xl border border-[var(--line)]/60 bg-gradient-to-br from-white to-[var(--sand)]/20 flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Milestone className="h-5 w-5 text-[var(--lagoon-deep)]" />
+                <h3 className="text-base font-extrabold text-[var(--sea-ink)]">
+                  Progress Semester Genap 2025/2026
+                </h3>
+              </div>
+              <span className="text-xs font-bold text-[var(--sea-ink-soft)] bg-white px-3 py-1 rounded-xl border border-[var(--line)] shadow-sm">
+                Minggu ke-12 / 16 Minggu
+              </span>
+            </div>
+
+            {/* Visual Bar */}
+            <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200/80 relative">
+              <div 
+                className="bg-gradient-to-r from-emerald-500 via-[var(--lagoon-deep)] to-amber-500 h-full rounded-full transition-all duration-500"
+                style={{ width: '75%' }}
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between text-[11px] font-bold text-[var(--sea-ink-soft)] gap-2">
+              <span className="flex items-center gap-1 text-emerald-700">
+                <Check className="h-3.5 w-3.5" /> Pra UTS & UTS Selesai
+              </span>
+              <span className="flex items-center gap-1 text-amber-800">
+                <Flame className="h-3.5 w-3.5" /> Pasca UTS & EDoM Berlangsung
+              </span>
+              <span className="flex items-center gap-1 text-sky-700">
+                <Clock className="h-3.5 w-3.5" /> UAS & KHS Mendatang
+              </span>
+            </div>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
+            {[
+              { id: 'semua', label: 'Semua Agenda' },
+              { id: 'perkuliahan', label: 'Perkuliahan' },
+              { id: 'edom', label: 'EDoM (Evaluasi Dosen)' },
+              { id: 'ujian', label: 'Ujian (UTS & UAS)' },
+              { id: 'administrasi', label: 'Nilai & KHS' },
+            ].map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setCalendarCategory(cat.id as any)}
+                className={`px-4 py-2 text-xs font-extrabold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+                  calendarCategory === cat.id
+                    ? 'bg-[var(--sea-ink)] text-white shadow-sm'
+                    : 'bg-white/80 text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] border border-[var(--line)]/50'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Milestone Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredKalender.map((item, idx) => renderMilestoneCard(item, idx))}
+          </div>
+
+        </div>
       ) : (
         /* EXAM SCHEDULE DISPLAY (UTS & UAS) */
         <div className="flex flex-col gap-8">
           
           {/* Controls Bar: Search & Status Filter */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white/50 border border-[var(--line)]/50 p-3 rounded-2xl">
-            {/* Search Input */}
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--sea-ink-soft)]" />
               <input
@@ -747,7 +962,6 @@ function JadwalPage() {
               />
             </div>
 
-            {/* Status Filter Buttons */}
             <div className="flex items-center gap-1 overflow-x-auto scrollbar-none shrink-0">
               <span className="text-[10px] font-bold text-[var(--sea-ink-soft)] uppercase tracking-wider mr-1 hidden md:inline">
                 Status:
