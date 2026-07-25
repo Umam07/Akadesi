@@ -30,71 +30,139 @@ async function seed() {
     console.log(`Seeded ${insertedDosen.length} lecturers.`);
 
     // 2. Create Students (Mahasiswa)
-    // Budi Santoso (Sem 4, IPK 3.50, SKS Lulus 60)
-    // Siti Aminah (Sem 3, IPK 2.80, SKS Lulus 36)
     const insertedStudents = await db.insert(mahasiswa).values([
       {
-        nim: '123456789',
-        nama: 'Budi Santoso',
-        passwordHash: 'dummy-hash-1',
-        ipk: 3.50,
-        totalSksLulus: 60,
-        semesterAktif: 4,
-        email: 'budi.santoso@yarsi.ac.id',
+        nim: '120100001',
+        nama: 'Farhan Ramadhan',
+        passwordHash: 'password1',
+        ipk: 3.85,
+        totalSksLulus: 80,
+        semesterAktif: 5,
+        email: 'farhan.ramadhan@yarsi.ac.id',
         fakultas: 'Teknologi Informasi',
         jurusan: 'Teknik Informatika',
-        noTelepon: '081234567890',
-        alamatJalan: 'Jl. Letjen Suprapto No. 1, Cempaka Putih, Jakarta Pusat',
+        noTelepon: '081234567891',
+        alamatJalan: 'Jl. Cempaka Putih Tengah No. 12, Cempaka Putih, Jakarta Pusat',
       },
       {
-        nim: '987654321',
-        nama: 'Siti Aminah',
-        passwordHash: 'dummy-hash-2',
-        ipk: 2.80,
-        totalSksLulus: 36,
+        nim: '120100002',
+        nama: 'Larasati Putri',
+        passwordHash: 'password2',
+        ipk: 3.42,
+        totalSksLulus: 44,
         semesterAktif: 3,
-        email: 'siti.aminah@yarsi.ac.id',
+        email: 'larasati.putri@yarsi.ac.id',
         fakultas: 'Teknologi Informasi',
-        jurusan: 'Teknik Informatika',
-        noTelepon: '089876543210',
-        alamatJalan: 'Jl. Salemba Raya No. 2, Senen, Jakarta Pusat',
+        jurusan: 'Sistem Informasi',
+        noTelepon: '081234567892',
+        alamatJalan: 'Jl. Rawamangun Muka No. 4, Pulo Gadung, Jakarta Timur',
+      },
+      {
+        nim: '120200003',
+        nama: 'Rian Hidayat',
+        passwordHash: 'password3',
+        ipk: 2.95,
+        totalSksLulus: 108,
+        semesterAktif: 7,
+        email: 'rian.hidayat@yarsi.ac.id',
+        fakultas: 'Ekonomi dan Bisnis',
+        jurusan: 'Akuntansi',
+        noTelepon: '081234567893',
+        alamatJalan: 'Jl. Salemba Tengah No. 15, Senen, Jakarta Pusat',
+      },
+      {
+        nim: '120200004',
+        nama: 'Nadia Utami',
+        passwordHash: 'password4',
+        ipk: 3.68,
+        totalSksLulus: 42,
+        semesterAktif: 3,
+        email: 'nadia.utami@yarsi.ac.id',
+        fakultas: 'Kedokteran',
+        jurusan: 'Kedokteran Umum',
+        noTelepon: '081234567894',
+        alamatJalan: 'Jl. Johar Baru No. 8, Johar Baru, Jakarta Pusat',
+      },
+      {
+        nim: '120200005',
+        nama: 'Daffa Saputra',
+        passwordHash: 'password5',
+        ipk: 3.15,
+        totalSksLulus: 20,
+        semesterAktif: 2,
+        email: 'daffa.saputra@yarsi.ac.id',
+        fakultas: 'Hukum',
+        jurusan: 'Ilmu Hukum',
+        noTelepon: '081234567895',
+        alamatJalan: 'Jl. Utan Kayu No. 25, Matraman, Jakarta Timur',
       }
     ]).returning();
 
-    const budi = insertedStudents.find(s => s.nim === '123456789')!;
-    const siti = insertedStudents.find(s => s.nim === '987654321')!;
     console.log(`Seeded ${insertedStudents.length} students.`);
+
+    const farhan = insertedStudents.find(s => s.nim === '120100001')!;
+    const larasati = insertedStudents.find(s => s.nim === '120100002')!;
+    const rian = insertedStudents.find(s => s.nim === '120200003')!;
+    const nadia = insertedStudents.find(s => s.nim === '120200004')!;
+    const daffa = insertedStudents.find(s => s.nim === '120200005')!;
 
     // 3. Create Courses (Mata Kuliah)
     const courses = [
-      // Semester 1
+      // FTI - Teknik Informatika
       { kodeMk: 'IF101', namaMk: 'Algoritma dan Pemrograman', sks: 3, semester: 1 },
       { kodeMk: 'IF102', namaMk: 'Matematika Diskrit', sks: 3, semester: 1 },
       { kodeMk: 'IF103', namaMk: 'Pengantar Teknologi Informasi', sks: 2, semester: 1 },
-      { kodeMk: 'IF104', namaMk: 'Pancasila dan Kewarganegaraan', sks: 2, semester: 1 },
-      { kodeMk: 'IF105', namaMk: 'Bahasa Inggris Akademik', sks: 2, semester: 1 },
-      
-      // Semester 2
       { kodeMk: 'IF201', namaMk: 'Struktur Data', sks: 3, semester: 2 },
-      { kodeMk: 'IF202', namaMk: 'Aljabar Linear dan Matriks', sks: 3, semester: 2 },
-      { kodeMk: 'IF203', namaMk: 'Organisasi & Arsitektur Komputer', sks: 3, semester: 2 },
-      { kodeMk: 'IF204', namaMk: 'Sistem Digital', sks: 3, semester: 2 },
-      { kodeMk: 'IF205', namaMk: 'Bahasa Indonesia', sks: 2, semester: 2 },
-      
-      // Semester 3
+      { kodeMk: 'IF202', namaMk: 'Sistem Operasi', sks: 3, semester: 2 },
       { kodeMk: 'IF301', namaMk: 'Sistem Basis Data', sks: 3, semester: 3 },
-      { kodeMk: 'IF302', namaMk: 'Sistem Operasi', sks: 3, semester: 3 },
-      { kodeMk: 'IF303', namaMk: 'Jaringan Komputer', sks: 3, semester: 3 },
-      { kodeMk: 'IF304', namaMk: 'Pemrograman Berorientasi Objek', sks: 4, semester: 3 },
-      { kodeMk: 'IF305', namaMk: 'Statistika dan Probabilitas', sks: 3, semester: 3 },
-      
-      // Semester 4
+      { kodeMk: 'IF302', namaMk: 'Jaringan Komputer', sks: 3, semester: 3 },
+      { kodeMk: 'IF303', namaMk: 'Pemrograman Berorientasi Objek', sks: 4, semester: 3 },
       { kodeMk: 'IF401', namaMk: 'Rekayasa Perangkat Lunak', sks: 3, semester: 4 },
-      { kodeMk: 'IF402', namaMk: 'Kecerdasan Buatan', sks: 3, semester: 4 },
-      { kodeMk: 'IF403', namaMk: 'Analisis & Desain Algoritma', sks: 3, semester: 4 },
-      { kodeMk: 'IF404', namaMk: 'Pemrograman Web', sks: 4, semester: 4 },
-      { kodeMk: 'IF405', namaMk: 'Interaksi Manusia dan Komputer', sks: 3, semester: 4 },
-      { kodeMk: 'IF406', namaMk: 'Grafika Komputer', sks: 3, semester: 4 },
+      { kodeMk: 'IF402', namaMk: 'Pemrograman Web', sks: 4, semester: 4 },
+      { kodeMk: 'IF501', namaMk: 'Kecerdasan Buatan', sks: 3, semester: 5 },
+      { kodeMk: 'IF502', namaMk: 'Keamanan Informasi', sks: 3, semester: 5 },
+      { kodeMk: 'IF601', namaMk: 'Cloud Computing', sks: 3, semester: 6 },
+      { kodeMk: 'IF701', namaMk: 'Metodologi Penelitian', sks: 2, semester: 7 },
+      
+      // FTI - Sistem Informasi
+      { kodeMk: 'SI101', namaMk: 'Dasar-Dasar Sistem Informasi', sks: 3, semester: 1 },
+      { kodeMk: 'SI201', namaMk: 'Analisis dan Perancangan Sistem', sks: 3, semester: 2 },
+      { kodeMk: 'SI301', namaMk: 'Manajemen Basis Data', sks: 3, semester: 3 },
+      { kodeMk: 'SI302', namaMk: 'Desain Pengalaman Pengguna (UX)', sks: 3, semester: 3 },
+      { kodeMk: 'SI401', namaMk: 'E-Business', sks: 3, semester: 4 },
+
+      // FEB - Akuntansi
+      { kodeMk: 'AK101', namaMk: 'Pengantar Akuntansi I', sks: 3, semester: 1 },
+      { kodeMk: 'AK102', namaMk: 'Pengantar Bisnis', sks: 2, semester: 1 },
+      { kodeMk: 'AK201', namaMk: 'Pengantar Akuntansi II', sks: 3, semester: 2 },
+      { kodeMk: 'AK301', namaMk: 'Akuntansi Keuangan Menengah I', sks: 3, semester: 3 },
+      { kodeMk: 'AK401', namaMk: 'Akuntansi Keuangan Menengah II', sks: 3, semester: 4 },
+      { kodeMk: 'AK501', namaMk: 'Akuntansi Biaya', sks: 3, semester: 5 },
+      { kodeMk: 'AK601', namaMk: 'Perpajakan', sks: 3, semester: 6 },
+      { kodeMk: 'AK701', namaMk: 'Auditing I', sks: 3, semester: 7 },
+      { kodeMk: 'AK702', namaMk: 'Akuntansi Sektor Publik', sks: 3, semester: 7 },
+
+      // FK - Kedokteran Umum
+      { kodeMk: 'KU101', namaMk: 'Biologi Sel dan Genetika', sks: 4, semester: 1 },
+      { kodeMk: 'KU102', namaMk: 'Anatomi Dasar', sks: 4, semester: 1 },
+      { kodeMk: 'KU201', namaMk: 'Fisiologi Manusia', sks: 4, semester: 2 },
+      { kodeMk: 'KU202', namaMk: 'Biokimia Kedokteran', sks: 3, semester: 2 },
+      { kodeMk: 'KU301', namaMk: 'Farmakologi Dasar', sks: 4, semester: 3 },
+      { kodeMk: 'KU302', namaMk: 'Patologi Anatomi', sks: 3, semester: 3 },
+      { kodeMk: 'KU401', namaMk: 'Mikrobiologi Kedokteran', sks: 4, semester: 4 },
+
+      // FH - Ilmu Hukum
+      { kodeMk: 'HK101', namaMk: 'Pengantar Ilmu Hukum', sks: 3, semester: 1 },
+      { kodeMk: 'HK102', namaMk: 'Pengantar Hukum Indonesia', sks: 3, semester: 1 },
+      { kodeMk: 'HK201', namaMk: 'Hukum Perdata', sks: 3, semester: 2 },
+      { kodeMk: 'HK202', namaMk: 'Hukum Pidana', sks: 3, semester: 2 },
+      { kodeMk: 'HK301', namaMk: 'Hukum Tata Negara', sks: 3, semester: 3 },
+      { kodeMk: 'HK401', namaMk: 'Hukum Administrasi Negara', sks: 3, semester: 4 },
+
+      // Mata Kuliah Umum
+      { kodeMk: 'UM101', namaMk: 'Pancasila dan Kewarganegaraan', sks: 2, semester: 1 },
+      { kodeMk: 'UM102', namaMk: 'Bahasa Indonesia', sks: 2, semester: 1 },
+      { kodeMk: 'UM103', namaMk: 'Bahasa Inggris Akademik', sks: 2, semester: 1 },
     ];
 
     const insertedCourses = await db.insert(mataKuliah).values(courses).returning();
@@ -103,169 +171,172 @@ async function seed() {
     // Map courses by code for easy reference
     const mkMap = new Map(insertedCourses.map(c => [c.kodeMk, c]));
 
-    // 4. Create Schedules (Jadwal) for Current / Available Courses
-    // Let's seed schedules for Semester 3 and 4 courses
+    // 4. Create Schedules (Jadwal)
     await db.insert(jadwal).values([
-      // Semester 3 Jadwal
-      {
-        mataKuliahId: mkMap.get('IF301')!.id,
-        dosenId: insertedDosen[0].id, // Joko Purwanto
-        hari: 'Senin',
-        jamMulai: '08:00:00',
-        jamSelesai: '10:30:00',
-        ruangan: 'Lab Basis Data',
-      },
-      {
-        mataKuliahId: mkMap.get('IF302')!.id,
-        dosenId: insertedDosen[2].id, // Ahmad Dahlan
-        hari: 'Selasa',
-        jamMulai: '08:00:00',
-        jamSelesai: '10:30:00',
-        ruangan: 'R-301',
-      },
-      {
-        mataKuliahId: mkMap.get('IF303')!.id,
-        dosenId: insertedDosen[3].id, // Rina Wijayanti
-        hari: 'Rabu',
-        jamMulai: '10:00:00',
-        jamSelesai: '12:30:00',
-        ruangan: 'Lab Jaringan',
-      },
-      {
-        mataKuliahId: mkMap.get('IF304')!.id,
-        dosenId: insertedDosen[1].id, // Sri Wahyuni
-        hari: 'Kamis',
-        jamMulai: '13:00:00',
-        jamSelesai: '16:20:00',
-        ruangan: 'Lab Komputasi',
-      },
-      {
-        mataKuliahId: mkMap.get('IF305')!.id,
-        dosenId: insertedDosen[4].id, // Fajar Nugroho
-        hari: 'Jumat',
-        jamMulai: '08:00:00',
-        jamSelesai: '10:30:00',
-        ruangan: 'R-202',
-      },
+      // FTI - Informatika
+      { mataKuliahId: mkMap.get('IF301')!.id, dosenId: insertedDosen[0].id, hari: 'Senin', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'Lab Basis Data' },
+      { mataKuliahId: mkMap.get('IF302')!.id, dosenId: insertedDosen[2].id, hari: 'Selasa', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-301' },
+      { mataKuliahId: mkMap.get('IF303')!.id, dosenId: insertedDosen[1].id, hari: 'Kamis', jamMulai: '13:00:00', jamSelesai: '16:20:00', ruangan: 'Lab Komputasi' },
+      { mataKuliahId: mkMap.get('IF401')!.id, dosenId: insertedDosen[0].id, hari: 'Senin', jamMulai: '10:45:00', jamSelesai: '13:15:00', ruangan: 'R-401' },
+      { mataKuliahId: mkMap.get('IF402')!.id, dosenId: insertedDosen[3].id, hari: 'Kamis', jamMulai: '08:00:00', jamSelesai: '11:20:00', ruangan: 'Lab Web' },
+      { mataKuliahId: mkMap.get('IF501')!.id, dosenId: insertedDosen[4].id, hari: 'Senin', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-501' },
+      { mataKuliahId: mkMap.get('IF502')!.id, dosenId: insertedDosen[3].id, hari: 'Rabu', jamMulai: '10:00:00', jamSelesai: '12:30:00', ruangan: 'Lab Keamanan' },
+      { mataKuliahId: mkMap.get('IF601')!.id, dosenId: insertedDosen[2].id, hari: 'Selasa', jamMulai: '13:00:00', jamSelesai: '15:30:00', ruangan: 'Lab Cloud' },
+      { mataKuliahId: mkMap.get('IF701')!.id, dosenId: insertedDosen[1].id, hari: 'Jumat', jamMulai: '08:00:00', jamSelesai: '09:40:00', ruangan: 'R-701' },
 
-      // Semester 4 Jadwal
-      {
-        mataKuliahId: mkMap.get('IF401')!.id,
-        dosenId: insertedDosen[0].id,
-        hari: 'Senin',
-        jamMulai: '10:45:00',
-        jamSelesai: '13:15:00',
-        ruangan: 'R-401',
-      },
-      {
-        mataKuliahId: mkMap.get('IF402')!.id,
-        dosenId: insertedDosen[1].id,
-        hari: 'Selasa',
-        jamMulai: '13:00:00',
-        jamSelesai: '15:30:00',
-        ruangan: 'Lab AI',
-      },
-      {
-        mataKuliahId: mkMap.get('IF403')!.id,
-        dosenId: insertedDosen[2].id,
-        hari: 'Rabu',
-        jamMulai: '08:00:00',
-        jamSelesai: '10:30:00',
-        ruangan: 'R-402',
-      },
-      {
-        mataKuliahId: mkMap.get('IF404')!.id,
-        dosenId: insertedDosen[3].id,
-        hari: 'Kamis',
-        jamMulai: '08:00:00',
-        jamSelesai: '11:20:00',
-        ruangan: 'Lab Web',
-      },
-      // Conflict Simulation Course: Let's schedule IF405 to overlap with IF404 on Kamis morning!
-      {
-        mataKuliahId: mkMap.get('IF405')!.id,
-        dosenId: insertedDosen[4].id,
-        hari: 'Kamis',
-        jamMulai: '09:00:00',
-        jamSelesai: '11:30:00',
-        ruangan: 'R-403',
-      },
-      // Conflict Simulation Course 2: Let's schedule IF406 to overlap with IF402 on Selasa afternoon!
-      {
-        mataKuliahId: mkMap.get('IF406')!.id,
-        dosenId: insertedDosen[4].id,
-        hari: 'Selasa',
-        jamMulai: '14:00:00',
-        jamSelesai: '16:30:00',
-        ruangan: 'R-405',
-      },
+      // FTI - Sistem Informasi
+      { mataKuliahId: mkMap.get('SI101')!.id, dosenId: insertedDosen[2].id, hari: 'Senin', jamMulai: '13:30:00', jamSelesai: '16:00:00', ruangan: 'R-201' },
+      { mataKuliahId: mkMap.get('SI201')!.id, dosenId: insertedDosen[0].id, hari: 'Rabu', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-202' },
+      { mataKuliahId: mkMap.get('SI301')!.id, dosenId: insertedDosen[4].id, hari: 'Senin', jamMulai: '10:45:00', jamSelesai: '13:15:00', ruangan: 'Lab SI' },
+      { mataKuliahId: mkMap.get('SI302')!.id, dosenId: insertedDosen[3].id, hari: 'Selasa', jamMulai: '13:00:00', jamSelesai: '15:30:00', ruangan: 'Lab Desain' },
+      { mataKuliahId: mkMap.get('SI401')!.id, dosenId: insertedDosen[1].id, hari: 'Kamis', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-203' },
+
+      // FEB - Akuntansi
+      { mataKuliahId: mkMap.get('AK101')!.id, dosenId: insertedDosen[4].id, hari: 'Senin', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-FEB1' },
+      { mataKuliahId: mkMap.get('AK201')!.id, dosenId: insertedDosen[3].id, hari: 'Selasa', jamMulai: '10:45:00', jamSelesai: '13:15:00', ruangan: 'R-FEB2' },
+      { mataKuliahId: mkMap.get('AK301')!.id, dosenId: insertedDosen[0].id, hari: 'Rabu', jamMulai: '13:00:00', jamSelesai: '15:30:00', ruangan: 'R-FEB3' },
+      { mataKuliahId: mkMap.get('AK401')!.id, dosenId: insertedDosen[1].id, hari: 'Kamis', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-FEB4' },
+      { mataKuliahId: mkMap.get('AK501')!.id, dosenId: insertedDosen[2].id, hari: 'Senin', jamMulai: '13:00:00', jamSelesai: '15:30:00', ruangan: 'R-FEB5' },
+      { mataKuliahId: mkMap.get('AK601')!.id, dosenId: insertedDosen[4].id, hari: 'Rabu', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-FEB6' },
+      { mataKuliahId: mkMap.get('AK701')!.id, dosenId: insertedDosen[0].id, hari: 'Selasa', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-Auditorium' },
+      { mataKuliahId: mkMap.get('AK702')!.id, dosenId: insertedDosen[1].id, hari: 'Kamis', jamMulai: '13:00:00', jamSelesai: '15:30:00', ruangan: 'R-FEB7' },
+
+      // FK - Kedokteran
+      { mataKuliahId: mkMap.get('KU101')!.id, dosenId: insertedDosen[1].id, hari: 'Senin', jamMulai: '08:00:00', jamSelesai: '11:20:00', ruangan: 'Lab FK1' },
+      { mataKuliahId: mkMap.get('KU102')!.id, dosenId: insertedDosen[4].id, hari: 'Selasa', jamMulai: '08:00:00', jamSelesai: '11:20:00', ruangan: 'Lab Anatomi' },
+      { mataKuliahId: mkMap.get('KU201')!.id, dosenId: insertedDosen[0].id, hari: 'Kamis', jamMulai: '08:00:00', jamSelesai: '11:20:00', ruangan: 'Lab Fisiologi' },
+      { mataKuliahId: mkMap.get('KU202')!.id, dosenId: insertedDosen[3].id, hari: 'Jumat', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'Lab Biokimia' },
+      { mataKuliahId: mkMap.get('KU301')!.id, dosenId: insertedDosen[1].id, hari: 'Rabu', jamMulai: '08:00:00', jamSelesai: '11:20:00', ruangan: 'Lab Farmako' },
+      { mataKuliahId: mkMap.get('KU302')!.id, dosenId: insertedDosen[2].id, hari: 'Jumat', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-FK2' },
+      { mataKuliahId: mkMap.get('KU401')!.id, dosenId: insertedDosen[0].id, hari: 'Senin', jamMulai: '13:00:00', jamSelesai: '16:20:00', ruangan: 'Lab Mikro' },
+
+      // FH - Hukum
+      { mataKuliahId: mkMap.get('HK101')!.id, dosenId: insertedDosen[2].id, hari: 'Senin', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-Hukum1' },
+      { mataKuliahId: mkMap.get('HK102')!.id, dosenId: insertedDosen[4].id, hari: 'Rabu', jamMulai: '10:45:00', jamSelesai: '13:15:00', ruangan: 'R-Hukum2' },
+      { mataKuliahId: mkMap.get('HK201')!.id, dosenId: insertedDosen[0].id, hari: 'Kamis', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-Hukum3' },
+      { mataKuliahId: mkMap.get('HK202')!.id, dosenId: insertedDosen[1].id, hari: 'Jumat', jamMulai: '13:30:00', jamSelesai: '16:00:00', ruangan: 'R-Hukum4' },
+      { mataKuliahId: mkMap.get('HK301')!.id, dosenId: insertedDosen[3].id, hari: 'Selasa', jamMulai: '08:00:00', jamSelesai: '10:30:00', ruangan: 'R-Hukum5' },
+      { mataKuliahId: mkMap.get('HK401')!.id, dosenId: insertedDosen[2].id, hari: 'Kamis', jamMulai: '13:00:00', jamSelesai: '15:30:00', ruangan: 'R-Hukum6' },
+
+      // MKU
+      { mataKuliahId: mkMap.get('UM101')!.id, dosenId: insertedDosen[4].id, hari: 'Rabu', jamMulai: '13:30:00', jamSelesai: '15:10:00', ruangan: 'R-305' },
+      { mataKuliahId: mkMap.get('UM102')!.id, dosenId: insertedDosen[3].id, hari: 'Kamis', jamMulai: '15:40:00', jamSelesai: '17:20:00', ruangan: 'R-306' },
+      { mataKuliahId: mkMap.get('UM103')!.id, dosenId: insertedDosen[2].id, hari: 'Jumat', jamMulai: '10:00:00', jamSelesai: '11:40:00', ruangan: 'R-307' },
     ]);
 
-    console.log('Seeded schedules (including test conflict slots).');
+    console.log('Seeded schedules.');
 
     // 5. Create KHS (Kartu Hasil Studi) history
-    // Budi Santoso: Sem 1, 2, 3 completed. (Total 12 + 14 + 16 SKS = 42 SKS? Wait, PRD says Budi has 60 SKS)
-    // Let's seed historical grades for Budi:
-    // Semester 1 (12 SKS): IF101 (A), IF102 (A), IF103 (A), IF104 (B), IF105 (B)
-    // Semester 2 (14 SKS): IF201 (A), IF202 (B), IF203 (A), IF204 (A), IF205 (A)
-    // Semester 3 (16 SKS): IF301 (A), IF302 (B), IF303 (A), IF304 (A), IF305 (B)
-    // Let's make sure it matches!
     await db.insert(khs).values([
-      // Budi - Semester 1
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF101')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF102')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF103')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF104')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF105')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      // Farhan - Semester 1
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF101')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF102')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF103')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('UM101')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('UM102')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
 
-      // Budi - Semester 2
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF201')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF202')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'B', bobot: 3.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF203')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF204')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF205')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      // Farhan - Semester 2
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF201')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF202')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('UM103')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('SI201')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'A', bobot: 4.0 },
 
-      // Budi - Semester 3
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF301')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF302')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF303')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF304')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF305')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      // Farhan - Semester 3
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF301')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF302')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF303')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('SI301')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
 
-      // Siti - Semester 1
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF101')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF102')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'C', bobot: 2.0 },
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF103')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF104')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF105')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      // Farhan - Semester 4
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF401')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF402')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('SI401')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'B', bobot: 3.0 },
 
-      // Siti - Semester 2
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF201')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'B', bobot: 3.0 },
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF202')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'C', bobot: 2.0 },
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF203')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'B', bobot: 3.0 },
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF204')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'B', bobot: 3.0 },
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF205')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      // Larasati - Semester 1
+      { mahasiswaId: larasati.id, mataKuliahId: mkMap.get('SI101')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: larasati.id, mataKuliahId: mkMap.get('UM101')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: larasati.id, mataKuliahId: mkMap.get('UM102')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: larasati.id, mataKuliahId: mkMap.get('UM103')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+
+      // Larasati - Semester 2
+      { mahasiswaId: larasati.id, mataKuliahId: mkMap.get('SI201')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: larasati.id, mataKuliahId: mkMap.get('IF201')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: larasati.id, mataKuliahId: mkMap.get('IF202')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'B', bobot: 3.0 },
+
+      // Rian - Semester 1
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('AK101')!.id, semesterAjaran: '2022/2023 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('AK102')!.id, semesterAjaran: '2022/2023 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('UM101')!.id, semesterAjaran: '2022/2023 Ganjil', nilaiHuruf: 'C', bobot: 2.0 },
+
+      // Rian - Semester 2
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('AK201')!.id, semesterAjaran: '2022/2023 Genap', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('UM102')!.id, semesterAjaran: '2022/2023 Genap', nilaiHuruf: 'B', bobot: 3.0 },
+
+      // Rian - Semester 3
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('AK301')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('UM103')!.id, semesterAjaran: '2023/2024 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+
+      // Rian - Semester 4
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('AK401')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('SI401')!.id, semesterAjaran: '2023/2024 Genap', nilaiHuruf: 'C', bobot: 2.0 },
+
+      // Rian - Semester 5
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('AK501')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('IF301')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+
+      // Rian - Semester 6
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('AK601')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('IF601')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'B', bobot: 3.0 },
+
+      // Nadia - Semester 1
+      { mahasiswaId: nadia.id, mataKuliahId: mkMap.get('KU101')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: nadia.id, mataKuliahId: mkMap.get('KU102')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: nadia.id, mataKuliahId: mkMap.get('UM101')!.id, semesterAjaran: '2024/2025 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+
+      // Nadia - Semester 2
+      { mahasiswaId: nadia.id, mataKuliahId: mkMap.get('KU201')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: nadia.id, mataKuliahId: mkMap.get('KU202')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: nadia.id, mataKuliahId: mkMap.get('UM102')!.id, semesterAjaran: '2024/2025 Genap', nilaiHuruf: 'A', bobot: 4.0 },
+
+      // Daffa - Semester 1
+      { mahasiswaId: daffa.id, mataKuliahId: mkMap.get('HK101')!.id, semesterAjaran: '2025/2026 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: daffa.id, mataKuliahId: mkMap.get('HK102')!.id, semesterAjaran: '2025/2026 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
+      { mahasiswaId: daffa.id, mataKuliahId: mkMap.get('UM101')!.id, semesterAjaran: '2025/2026 Ganjil', nilaiHuruf: 'A', bobot: 4.0 },
+      { mahasiswaId: daffa.id, mataKuliahId: mkMap.get('UM102')!.id, semesterAjaran: '2025/2026 Ganjil', nilaiHuruf: 'B', bobot: 3.0 },
     ]);
 
     console.log('Seeded grade records (KHS).');
 
-    // 6. Seed some active KRS items for students in Semester 3 & 4
-    // Budi Santoso (Semester 4 - 2025/2026 Genap) -> Pre-register Rekayasa Perangkat Lunak and Pemrograman Web
+    // 6. Seed active KRS items for 2025/2026 Genap
     await db.insert(krsItem).values([
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF401')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
-      { mahasiswaId: budi.id, mataKuliahId: mkMap.get('IF404')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
-      
-      // Siti Aminah (Semester 3 - 2025/2026 Genap) -> Pre-register Sistem Basis Data
-      { mahasiswaId: siti.id, mataKuliahId: mkMap.get('IF301')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+      // Farhan
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF501')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+      { mahasiswaId: farhan.id, mataKuliahId: mkMap.get('IF502')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+
+      // Larasati
+      { mahasiswaId: larasati.id, mataKuliahId: mkMap.get('SI301')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+      { mahasiswaId: larasati.id, mataKuliahId: mkMap.get('SI302')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+
+      // Rian
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('AK701')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+      { mahasiswaId: rian.id, mataKuliahId: mkMap.get('AK702')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+
+      // Nadia
+      { mahasiswaId: nadia.id, mataKuliahId: mkMap.get('KU301')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+      { mahasiswaId: nadia.id, mataKuliahId: mkMap.get('KU302')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+
+      // Daffa
+      { mahasiswaId: daffa.id, mataKuliahId: mkMap.get('HK201')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
+      { mahasiswaId: daffa.id, mataKuliahId: mkMap.get('HK202')!.id, semesterAjaran: '2025/2026 Genap', status: 'disetujui' },
     ]);
 
-    console.log('Seeded pre-registered KRS items.');
+    console.log('Seeded active KRS items.');
 
     // 7. Seed announcements (Pengumuman)
     const announcements = await db.insert(pengumuman).values([
       {
         judul: 'Pendaftaran KRS Semester Genap 2025/2026',
-        isi: 'Diberitahukan kepada seluruh mahasiswa Fakultas Teknologi Informasi bahwa pengisian KRS untuk Semester Genap 2025/2026 dibuka mulai tanggal 20 Juli hingga 30 Juli 2026. Harap melakukan konsultasi dengan Dosen Pembimbing Akademik masing-masing sebelum memilih mata kuliah untuk menghindari kesalahan kelas.',
+        isi: 'Diberitahukan kepada seluruh mahasiswa Universitas YARSI bahwa pengisian KRS untuk Semester Genap 2025/2026 dibuka mulai tanggal 20 Juli hingga 30 Juli 2026. Harap melakukan konsultasi dengan Dosen Pembimbing Akademik masing-masing sebelum memilih mata kuliah untuk menghindari kesalahan kelas.',
         diterbitkanPada: new Date('2026-07-15T09:00:00Z'),
       },
       {
@@ -275,7 +346,7 @@ async function seed() {
       },
       {
         judul: 'Workshop Pembangunan Web Modern dengan TanStack',
-        isi: 'Fakultas bekerjasama dengan komunitas developer menyelenggarakan Workshop Hands-on TanStack Start dan Supabase pada hari Sabtu, 25 Juli 2026. Acara bertempat di Lab Komputasi pukul 09:00 - 15:00 WIB. Kuota terbatas 40 peserta, segera daftar melalui tautan registrasi di grup prodi.',
+        isi: 'Fakultas Teknologi Informasi bekerjasama dengan komunitas developer menyelenggarakan Workshop Hands-on TanStack Start dan Supabase pada hari Sabtu, 25 Juli 2026. Acara bertempat di Lab Komputasi pukul 09:00 - 15:00 WIB. Kuota terbatas 40 peserta, segera daftar melalui tautan registrasi di grup prodi.',
         diterbitkanPada: new Date('2026-07-08T10:00:00Z'),
       },
       {
@@ -287,14 +358,13 @@ async function seed() {
 
     console.log(`Seeded ${announcements.length} announcements.`);
 
-    // 8. Mark some announcements as read for Budi
+    // 8. Mark some announcements as read for Farhan
     await db.insert(pengumumanDibaca).values([
-      { mahasiswaId: budi.id, pengumumanId: announcements[1].id, dibacaPada: new Date() },
-      { mahasiswaId: budi.id, pengumumanId: announcements[3].id, dibacaPada: new Date() },
+      { mahasiswaId: farhan.id, pengumumanId: announcements[1].id, dibacaPada: new Date() },
+      { mahasiswaId: farhan.id, pengumumanId: announcements[3].id, dibacaPada: new Date() },
     ]);
 
     console.log('Seeded announcement read flags.');
-
     console.log('Seeding completed successfully!');
   } catch (error) {
     console.error('Error seeding database:', error);

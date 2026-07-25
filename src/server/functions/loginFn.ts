@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { db } from '../../db'
+import { dbMiddleware } from '../../db/middleware'
 import { mahasiswa } from '../../db/schema'
 import { eq } from 'drizzle-orm'
 import { setSession } from '../../lib/auth'
@@ -12,9 +12,11 @@ const loginSchema = z.object({
 })
 
 export const loginFn = createServerFn({ method: 'POST' })
+  .middleware([dbMiddleware])
   .validator((data: unknown) => loginSchema.parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const { nim, password } = data
+    const db = context.db
 
     // Cari mahasiswa berdasarkan NIM
     const mhs = await db.query.mahasiswa.findFirst({
