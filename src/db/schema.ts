@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, real, integer, time, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, real, integer, time, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const mahasiswa = pgTable("mahasiswa", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -21,6 +21,8 @@ export const mataKuliah = pgTable("mata_kuliah", {
   namaMk: varchar("nama_mk", { length: 255 }).notNull(),
   sks: integer("sks").notNull(),
   semester: integer("semester").notNull(),
+  jurusan: varchar("jurusan", { length: 255 }),
+  isWajib: boolean("is_wajib").notNull().default(true),
 });
 
 export const dosen = pgTable("dosen", {
