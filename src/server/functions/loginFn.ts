@@ -1,10 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { dbMiddleware } from '../../db/middleware'
-import { mahasiswa } from '../../db/schema'
-import { eq } from 'drizzle-orm'
 import { setSession } from '../../lib/auth'
 import { redirect } from '@tanstack/react-router'
+import { getSupabaseServerClient } from '../../lib/supabase-server'
 
 const loginSchema = z.object({
   nim: z.string().min(1, 'NIM tidak boleh kosong'),
@@ -12,24 +10,25 @@ const loginSchema = z.object({
 })
 
 export const loginFn = createServerFn({ method: 'POST' })
-  .middleware([dbMiddleware])
   .validator((data: unknown) => loginSchema.parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     const { nim, password } = data
-    const db = context.db
 
-    // Cari mahasiswa berdasarkan NIM
-    const mhs = await db.query.mahasiswa.findFirst({
-      where: eq(mahasiswa.nim, nim),
-    })
+    // Gunakan Supabase JS (HTTP-based) agar bekerja di Cloudflare Workers maupun Node.js
+    const supabase = getSupabaseServerClient()
 
-    if (!mhs) {
+    const { data: mhs, error } = await supabase
+      .from('mahasiswa')
+      .select('id, nim, nama, password_hash')
+      .eq('nim', nim)
+      .single()
+
+    if (error || !mhs) {
       throw new Error('NIM atau Password salah')
     }
 
-    // Dummy password check: in a real app, use bcrypt.compare
-    // For this MVP, we match plain text hash
-    if (mhs.passwordHash !== password) {
+    // Cek password (plain text untuk MVP ini)
+    if (mhs.password_hash !== password) {
       throw new Error('NIM atau Password salah')
     }
 

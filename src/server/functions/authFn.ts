@@ -1,8 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { getSession, clearSession } from '../../lib/auth'
-import { dbMiddleware } from '../../db/middleware'
-import { mahasiswa } from '../../db/schema'
-import { eq } from 'drizzle-orm'
+import { getSupabaseServerClient } from '../../lib/supabase-server'
 
 // getAuthSession: Hanya membaca cookie session, TIDAK butuh koneksi DB
 export const getAuthSession = createServerFn({ method: 'GET' })
@@ -11,23 +9,23 @@ export const getAuthSession = createServerFn({ method: 'GET' })
   })
 
 export const verifyStudentSession = createServerFn({ method: 'GET' })
-  .middleware([dbMiddleware])
-  .handler(async ({ context }) => {
+  .handler(async () => {
     const session = getSession()
     if (!session) return null
-    const db = context.db
 
-    // Verify student exists in current database
-    const exists = await db.query.mahasiswa.findFirst({
-      where: eq(mahasiswa.id, session.id),
-      columns: { id: true }
-    })
+    // Gunakan Supabase JS (HTTP-based) agar bekerja di Cloudflare Workers
+    const supabase = getSupabaseServerClient()
 
-  if (!exists) {
-    clearSession()
-    return null
-  }
+    const { data: exists, error } = await supabase
+      .from('mahasiswa')
+      .select('id')
+      .eq('id', session.id)
+      .single()
 
-  return session
-})
+    if (error || !exists) {
+      clearSession()
+      return null
+    }
 
+    return session
+  })

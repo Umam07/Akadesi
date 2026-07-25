@@ -4,6 +4,8 @@
   "compatibility_flags": ["nodejs_compat_v2"],
   "main": "@tanstack/react-start/server-entry",
   "vars": {
-    "DATABASE_URL": "postgresql://postgres.azaewrgasvzcvbdxrupw:ww6LSWs5qnJY0mYB@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+    "DATABASE_URL": "postgresql://postgres.azaewrgasvzcvbdxrupw:ww6LSWs5qnJY0mYB@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres",
+    "SUPABASE_URL": "https://azaewrgasvzcvbdxrupw.supabase.co",
+    "SUPABASE_ANON_KEY": "sb_publishable_-BrvRpauOAhQ4svsXa3q0A_xchfIavo"
   }
 }
