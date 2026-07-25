@@ -893,3 +893,313 @@ export const getMataKuliahData = createServerFn({ method: 'GET' })
     }
   })
 
+// 7. Keuangan & UKT Data Function
+export const getKeuanganData = createServerFn({ method: 'GET' })
+  .middleware([dbMiddleware])
+  .handler(async ({ context }) => {
+    const db = context.db
+    const session = await requireAuth()
+    const studentId = session.id
+
+    // Fetch student info
+    const studentInfo = await db.query.mahasiswa.findFirst({
+      where: eq(mahasiswa.id, studentId)
+    })
+
+    if (!studentInfo) {
+      throw new Error('Data mahasiswa tidak ditemukan')
+    }
+
+    const jurusan = studentInfo.jurusan || 'Teknik Informatika'
+    
+    // Determine UKT nominal based on Jurusan (Default Teknik Informatika = 10 Juta)
+    let nominalUktPerSem = 10000000
+    if (jurusan.toLowerCase().includes('sistem informasi')) {
+      nominalUktPerSem = 9500000
+    } else if (jurusan.toLowerCase().includes('akuntansi')) {
+      nominalUktPerSem = 8500000
+    } else if (jurusan.toLowerCase().includes('kedokteran')) {
+      nominalUktPerSem = 25000000
+    } else if (jurusan.toLowerCase().includes('hukum')) {
+      nominalUktPerSem = 9000000
+    }
+
+    const semesterAktif = studentInfo.semesterAktif || 5
+
+    // Helper to generate 3 installments per semester
+    const generateInstallments = (semesterNum: number, isPaidAll: boolean, isPartial: boolean, isKip: boolean) => {
+      const c1Amount = Math.round(nominalUktPerSem * 0.4) // 40%
+      const c2Amount = Math.round(nominalUktPerSem * 0.3) // 30%
+      const c3Amount = nominalUktPerSem - c1Amount - c2Amount // 30%
+
+      const semYears = Math.floor((semesterNum - 1) / 2) + 2023
+      const isOdd = semesterNum % 2 !== 0
+
+      if (isKip) {
+        return [
+          {
+            cicilanKe: 1,
+            judul: 'Cicilan 1 (Registrasi Awal)',
+            persentase: '40%',
+            nominal: 0,
+            nominalOriginal: c1Amount,
+            dueDate: isOdd ? `15 September ${semYears}` : `15 Februari ${semYears + 1}`,
+            paidDate: isOdd ? `10 September ${semYears}` : `10 Februari ${semYears + 1}`,
+            status: 'BEBAS_KIP',
+            metodePembayaran: 'Beasiswa KIP Kuliah Kemendikbud',
+            nomorVa: 'KIP-KULIAH-GOV',
+            keterangan: 'Dibebaskan 100% oleh Beasiswa KIP Kuliah',
+          },
+          {
+            cicilanKe: 2,
+            judul: 'Cicilan 2 (Sebelum UTS)',
+            persentase: '30%',
+            nominal: 0,
+            nominalOriginal: c2Amount,
+            dueDate: isOdd ? `15 November ${semYears}` : `15 April ${semYears + 1}`,
+            paidDate: isOdd ? `10 November ${semYears}` : `10 April ${semYears + 1}`,
+            status: 'BEBAS_KIP',
+            metodePembayaran: 'Beasiswa KIP Kuliah Kemendikbud',
+            nomorVa: 'KIP-KULIAH-GOV',
+            keterangan: 'Dibebaskan 100% oleh Beasiswa KIP Kuliah',
+          },
+          {
+            cicilanKe: 3,
+            judul: 'Cicilan 3 (Sebelum UAS)',
+            persentase: '30%',
+            nominal: 0,
+            nominalOriginal: c3Amount,
+            dueDate: isOdd ? `15 Januari ${semYears + 1}` : `15 Juni ${semYears + 1}`,
+            paidDate: isOdd ? `10 Januari ${semYears + 1}` : `10 Juni ${semYears + 1}`,
+            status: 'BEBAS_KIP',
+            metodePembayaran: 'Beasiswa KIP Kuliah Kemendikbud',
+            nomorVa: 'KIP-KULIAH-GOV',
+            keterangan: 'Dibebaskan 100% oleh Beasiswa KIP Kuliah',
+          },
+        ]
+      }
+
+      if (isPaidAll) {
+        return [
+          {
+            cicilanKe: 1,
+            judul: 'Cicilan 1 (Registrasi Awal)',
+            persentase: '40%',
+            nominal: c1Amount,
+            nominalOriginal: c1Amount,
+            dueDate: isOdd ? `15 September ${semYears}` : `15 Februari ${semYears + 1}`,
+            paidDate: isOdd ? `12 September ${semYears}` : `12 Februari ${semYears + 1}`,
+            status: 'LUNAS',
+            metodePembayaran: 'BCA Virtual Account',
+            nomorVa: `88270${studentInfo.nim}01`,
+            keterangan: 'Pembayaran berhasil diverifikasi',
+          },
+          {
+            cicilanKe: 2,
+            judul: 'Cicilan 2 (Sebelum UTS)',
+            persentase: '30%',
+            nominal: c2Amount,
+            nominalOriginal: c2Amount,
+            dueDate: isOdd ? `15 November ${semYears}` : `15 April ${semYears + 1}`,
+            paidDate: isOdd ? `10 November ${semYears}` : `14 April ${semYears + 1}`,
+            status: 'LUNAS',
+            metodePembayaran: 'Mandiri Virtual Account',
+            nomorVa: `88270${studentInfo.nim}02`,
+            keterangan: 'Pembayaran berhasil diverifikasi',
+          },
+          {
+            cicilanKe: 3,
+            judul: 'Cicilan 3 (Sebelum UAS)',
+            persentase: '30%',
+            nominal: c3Amount,
+            nominalOriginal: c3Amount,
+            dueDate: isOdd ? `15 Januari ${semYears + 1}` : `15 Juni ${semYears + 1}`,
+            paidDate: isOdd ? `08 Januari ${semYears + 1}` : `10 Juni ${semYears + 1}`,
+            status: 'LUNAS',
+            metodePembayaran: 'QRIS / Bank Transfer',
+            nomorVa: `88270${studentInfo.nim}03`,
+            keterangan: 'Pembayaran berhasil diverifikasi',
+          },
+        ]
+      }
+
+      if (isPartial) {
+        // Active semester with 2 of 3 paid
+        return [
+          {
+            cicilanKe: 1,
+            judul: 'Cicilan 1 (Registrasi Awal)',
+            persentase: '40%',
+            nominal: c1Amount,
+            nominalOriginal: c1Amount,
+            dueDate: '15 Februari 2026',
+            paidDate: '10 Februari 2026',
+            status: 'LUNAS',
+            metodePembayaran: 'BCA Virtual Account',
+            nomorVa: `88270${studentInfo.nim}01`,
+            keterangan: 'Pembayaran berhasil diverifikasi',
+          },
+          {
+            cicilanKe: 2,
+            judul: 'Cicilan 2 (Sebelum UTS)',
+            persentase: '30%',
+            nominal: c2Amount,
+            nominalOriginal: c2Amount,
+            dueDate: '15 April 2026',
+            paidDate: '12 April 2026',
+            status: 'LUNAS',
+            metodePembayaran: 'BNI Virtual Account',
+            nomorVa: `88270${studentInfo.nim}02`,
+            keterangan: 'Pembayaran berhasil diverifikasi',
+          },
+          {
+            cicilanKe: 3,
+            judul: 'Cicilan 3 (Sebelum UAS)',
+            persentase: '30%',
+            nominal: c3Amount,
+            nominalOriginal: c3Amount,
+            dueDate: '15 Juni 2026',
+            paidDate: null,
+            status: 'MENUNGGU',
+            metodePembayaran: 'BCA / Mandiri / QRIS',
+            nomorVa: `88270${studentInfo.nim}03`,
+            keterangan: 'Belum dibayar (Jatuh tempo 15 Juni 2026)',
+          },
+        ]
+      }
+
+      // Upcoming unpaid semesters
+      return [
+        {
+          cicilanKe: 1,
+          judul: 'Cicilan 1 (Registrasi Awal)',
+          persentase: '40%',
+          nominal: c1Amount,
+          nominalOriginal: c1Amount,
+          dueDate: isOdd ? `15 September ${semYears}` : `15 Februari ${semYears + 1}`,
+          paidDate: null,
+          status: 'BELUM_DIBAYAR',
+          metodePembayaran: 'BCA / Mandiri / QRIS',
+          nomorVa: `88270${studentInfo.nim}01`,
+          keterangan: 'Belum masuk periode pembayaran',
+        },
+        {
+          cicilanKe: 2,
+          judul: 'Cicilan 2 (Sebelum UTS)',
+          persentase: '30%',
+          nominal: c2Amount,
+          nominalOriginal: c2Amount,
+          dueDate: isOdd ? `15 November ${semYears}` : `15 April ${semYears + 1}`,
+          paidDate: null,
+          status: 'BELUM_DIBAYAR',
+          metodePembayaran: 'BCA / Mandiri / QRIS',
+          nomorVa: `88270${studentInfo.nim}02`,
+          keterangan: 'Belum masuk periode pembayaran',
+        },
+        {
+          cicilanKe: 3,
+          judul: 'Cicilan 3 (Sebelum UAS)',
+          persentase: '30%',
+          nominal: c3Amount,
+          nominalOriginal: c3Amount,
+          dueDate: isOdd ? `15 Januari ${semYears + 1}` : `15 Juni ${semYears + 1}`,
+          paidDate: null,
+          status: 'BELUM_DIBAYAR',
+          metodePembayaran: 'BCA / Mandiri / QRIS',
+          nomorVa: `88270${studentInfo.nim}03`,
+          keterangan: 'Belum masuk periode pembayaran',
+        },
+      ]
+    }
+
+    // Build data for standard Reguler profile
+    const regulerSemesters = []
+    for (let sem = 1; sem <= 8; sem++) {
+      const isPast = sem < semesterAktif
+      const isCurrent = sem === semesterAktif
+      const semYears = Math.floor((sem - 1) / 2) + 2023
+      const isOdd = sem % 2 !== 0
+      const semesterAjaran = `${semYears}/${semYears + 1} ${isOdd ? 'Ganjil' : 'Genap'}`
+
+      let status = 'UPCOMING'
+      let isPaidAll = false
+      let isPartial = false
+
+      if (isPast) {
+        status = 'LUNAS'
+        isPaidAll = true
+      } else if (isCurrent) {
+        status = 'MENCICIL'
+        isPartial = true
+      } else {
+        status = 'BELUM_DIBAYAR'
+      }
+
+      const cicilan = generateInstallments(sem, isPaidAll, isPartial, false)
+      const totalPaid = cicilan.reduce((sum, c) => sum + (c.status === 'LUNAS' ? c.nominal : 0), 0)
+      const sisaTagihan = nominalUktPerSem - totalPaid
+
+      regulerSemesters.push({
+        semester: sem,
+        semesterAjaran,
+        status,
+        nominalUkt: nominalUktPerSem,
+        totalPaid,
+        sisaTagihan,
+        progressPercent: Math.round((totalPaid / nominalUktPerSem) * 100),
+        cicilan,
+      })
+    }
+
+    // Build data for KIP Kuliah profile
+    const kipSemesters = []
+    for (let sem = 1; sem <= 8; sem++) {
+      const semYears = Math.floor((sem - 1) / 2) + 2023
+      const isOdd = sem % 2 !== 0
+      const semesterAjaran = `${semYears}/${semYears + 1} ${isOdd ? 'Ganjil' : 'Genap'}`
+
+      const cicilan = generateInstallments(sem, false, false, true)
+
+      kipSemesters.push({
+        semester: sem,
+        semesterAjaran,
+        status: 'BEBAS_KIP',
+        nominalUkt: 0,
+        nominalOriginalUkt: nominalUktPerSem,
+        totalPaid: 0,
+        sisaTagihan: 0,
+        progressPercent: 100,
+        cicilan,
+      })
+    }
+
+    return {
+      student: studentInfo,
+      jurusan,
+      nominalUktPerSem,
+      semesterAktif,
+      regulerProfile: {
+        tipePembiayaan: 'Reguler / Mandiri',
+        isKip: false,
+        totalTagihanSemesterAktif: nominalUktPerSem,
+        totalTerbayarSemesterAktif: Math.round(nominalUktPerSem * 0.7), // 2 cicilan lunas (40% + 30%)
+        sisaTagihanSemesterAktif: Math.round(nominalUktPerSem * 0.3), // 1 cicilan tersisa (30%)
+        cicilanLunasCount: 2,
+        totalCicilanCount: 3,
+        semesters: regulerSemesters,
+      },
+      kipProfile: {
+        tipePembiayaan: 'Beasiswa KIP Kuliah Kemendikbud RISTEK',
+        isKip: true,
+        beasiswaTitle: 'Kartu Indonesia Pintar (KIP) Kuliah',
+        beasiswaSubtitle: 'Dibebaskan dari Seluruh Biaya UKT 8 Semester Hingga Lulus',
+        totalSubsidiKip: nominalUktPerSem * 8,
+        totalTagihanSemesterAktif: 0,
+        totalTerbayarSemesterAktif: 0,
+        sisaTagihanSemesterAktif: 0,
+        semesters: kipSemesters,
+      },
+    }
+  })
+
+

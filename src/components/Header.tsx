@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   User,
   BookOpen,
+  Wallet,
 } from 'lucide-react'
 
 interface HeaderProps {
@@ -27,6 +28,7 @@ const NAV_LINKS = [
   { to: '/mahasiswa/matakuliah', label: 'Mata Kuliah', icon: BookOpen },
   { to: '/mahasiswa/krs', label: 'KRS', icon: ClipboardList },
   { to: '/mahasiswa/khs', label: 'KHS', icon: GraduationCap },
+  { to: '/mahasiswa/keuangan', label: 'Keuangan', icon: Wallet },
   { to: '/mahasiswa/pengumuman', label: 'Pengumuman', icon: Megaphone },
 ] as const
 
