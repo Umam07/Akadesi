@@ -1,4 +1,4 @@
-import { Link, useRouter, isRedirect } from '@tanstack/react-router'
+import { Link, useRouter, useLocation, isRedirect } from '@tanstack/react-router'
 import type { UserSession } from '../lib/auth'
 import { logoutFn } from '../server/functions/logoutFn'
 import { useState, useRef, useEffect } from 'react'
@@ -22,14 +22,31 @@ interface HeaderProps {
   session: UserSession | null
 }
 
-const NAV_LINKS = [
-  { to: '/mahasiswa/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/mahasiswa/jadwal', label: 'Jadwal', icon: CalendarDays },
-  { to: '/mahasiswa/matakuliah', label: 'Mata Kuliah', icon: BookOpen },
-  { to: '/mahasiswa/krs', label: 'KRS', icon: ClipboardList },
-  { to: '/mahasiswa/khs', label: 'KHS', icon: GraduationCap },
-  { to: '/mahasiswa/keuangan', label: 'Keuangan', icon: Wallet },
-  { to: '/mahasiswa/pengumuman', label: 'Pengumuman', icon: Megaphone },
+const AKADEMIK_LINKS = [
+  {
+    to: '/mahasiswa/matakuliah',
+    label: 'Mata Kuliah',
+    desc: 'Daftar kurikulum & SKS',
+    icon: BookOpen,
+  },
+  {
+    to: '/mahasiswa/jadwal',
+    label: 'Jadwal Perkuliahan',
+    desc: 'Jadwal harian & ujian UTS/UAS',
+    icon: CalendarDays,
+  },
+  {
+    to: '/mahasiswa/krs',
+    label: 'Kartu Rencana Studi',
+    desc: 'Pengisian KRS & rencana studi',
+    icon: ClipboardList,
+  },
+  {
+    to: '/mahasiswa/khs',
+    label: 'Kartu Hasil Studi',
+    desc: 'Nilai semester, IPS & IPK',
+    icon: GraduationCap,
+  },
 ] as const
 
 // Generate a consistent hue from a name string
@@ -76,15 +93,26 @@ export function AvatarInitial({ name }: { name: string }) {
 
 export default function Header({ session }: HeaderProps) {
   const router = useRouter()
+  const location = useLocation()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [isAkademikOpen, setIsAkademikOpen] = useState(false)
+  
   const profileRef = useRef<HTMLDivElement>(null)
+  const akademikRef = useRef<HTMLDivElement>(null)
 
-  // Close profile dropdown on outside click
+  const isAkademikActive = AKADEMIK_LINKS.some((item) =>
+    location.pathname.startsWith(item.to)
+  )
+
+  // Close dropdowns on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setIsProfileOpen(false)
+      }
+      if (akademikRef.current && !akademikRef.current.contains(e.target as Node)) {
+        setIsAkademikOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
@@ -93,6 +121,7 @@ export default function Header({ session }: HeaderProps) {
 
   const handleLogout = async () => {
     setIsProfileOpen(false)
+    setIsAkademikOpen(false)
     setIsMobileOpen(false)
     try {
       await logoutFn()
@@ -147,20 +176,176 @@ export default function Header({ session }: HeaderProps) {
           </span>
         </Link>
 
-        {/* Desktop Nav Links (Centered) */}
+        {/* Desktop Nav Links (Grouped, Centered) */}
         {session && (
-          <div className="hidden md:flex items-center gap-0.5 md:absolute md:left-1/2 md:-translate-x-1/2">
-            {NAV_LINKS.map(({ to, label, icon: Icon }) => (
-              <Link
-                key={to}
-                to={to}
-                className="nav-pill"
-                activeProps={{ className: 'nav-pill nav-pill-active' }}
+          <div className="hidden md:flex items-center gap-1 md:absolute md:left-1/2 md:-translate-x-1/2">
+            {/* 1. Dashboard */}
+            <Link
+              to="/mahasiswa/dashboard"
+              className="nav-pill"
+              activeProps={{ className: 'nav-pill nav-pill-active' }}
+            >
+              <LayoutDashboard size={14} strokeWidth={2.2} style={{ flexShrink: 0 }} />
+              Dashboard
+            </Link>
+
+            {/* 2. Akademik Dropdown */}
+            <div className="relative" ref={akademikRef}>
+              <button
+                type="button"
+                onClick={() => setIsAkademikOpen((v) => !v)}
+                className={`nav-pill cursor-pointer border-none bg-transparent ${
+                  isAkademikActive ? 'nav-pill-active' : ''
+                }`}
+                style={{ outline: 'none' }}
               >
-                <Icon size={14} strokeWidth={2.2} style={{ flexShrink: 0 }} />
-                {label}
-              </Link>
-            ))}
+                <GraduationCap size={14} strokeWidth={2.2} style={{ flexShrink: 0 }} />
+                <span>Akademik</span>
+                <ChevronDown
+                  size={13}
+                  strokeWidth={2.5}
+                  style={{
+                    transition: 'transform 180ms ease',
+                    transform: isAkademikOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    opacity: 0.75,
+                  }}
+                />
+              </button>
+
+              {/* Akademik Dropdown Panel */}
+              {isAkademikOpen && (
+                <div
+                  className="rise-in"
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 10px)',
+                    left: 0,
+                    width: 285,
+                    background: 'rgba(255, 255, 255, 0.98)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 16,
+                    boxShadow: '0 16px 40px rgba(23,58,64,0.15), 0 2px 10px rgba(23,58,64,0.08)',
+                    padding: '8px',
+                    backdropFilter: 'blur(12px)',
+                    zIndex: 100,
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: '6px 10px 8px',
+                      fontSize: 10,
+                      fontWeight: 800,
+                      color: 'var(--sea-ink-soft)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      borderBottom: '1px solid var(--line)',
+                      marginBottom: 6,
+                    }}
+                  >
+                    Layanan Akademik
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {AKADEMIK_LINKS.map(({ to, label, desc, icon: Icon }) => {
+                      const isActive = location.pathname.startsWith(to)
+                      return (
+                        <Link
+                          key={to}
+                          to={to}
+                          onClick={() => setIsAkademikOpen(false)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 10,
+                            padding: '9px 10px',
+                            borderRadius: 12,
+                            textDecoration: 'none',
+                            transition: 'all 140ms ease',
+                            background: isActive
+                              ? 'color-mix(in oklab, var(--lagoon) 16%, var(--surface-strong))'
+                              : 'transparent',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!isActive) {
+                              e.currentTarget.style.background = 'var(--surface-strong)'
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isActive) {
+                              e.currentTarget.style.background = 'transparent'
+                            }
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: 9,
+                              background: isActive
+                                ? 'var(--sea-ink)'
+                                : 'color-mix(in oklab, var(--sand) 70%, white)',
+                              color: isActive ? 'var(--sand)' : 'var(--sea-ink)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                              transition: 'all 140ms ease',
+                            }}
+                          >
+                            <Icon size={16} strokeWidth={2.2} />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <span
+                              style={{
+                                display: 'block',
+                                fontSize: 13,
+                                fontWeight: isActive ? 800 : 700,
+                                color: 'var(--sea-ink)',
+                                lineHeight: 1.2,
+                              }}
+                            >
+                              {label}
+                            </span>
+                            <span
+                              style={{
+                                display: 'block',
+                                fontSize: 10.5,
+                                fontWeight: 500,
+                                color: 'var(--sea-ink-soft)',
+                                lineHeight: 1.2,
+                                marginTop: 2,
+                              }}
+                            >
+                              {desc}
+                            </span>
+                          </div>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 3. Keuangan */}
+            <Link
+              to="/mahasiswa/keuangan"
+              className="nav-pill"
+              activeProps={{ className: 'nav-pill nav-pill-active' }}
+            >
+              <Wallet size={14} strokeWidth={2.2} style={{ flexShrink: 0 }} />
+              Keuangan
+            </Link>
+
+            {/* 4. Pengumuman */}
+            <Link
+              to="/mahasiswa/pengumuman"
+              className="nav-pill"
+              activeProps={{ className: 'nav-pill nav-pill-active' }}
+            >
+              <Megaphone size={14} strokeWidth={2.2} style={{ flexShrink: 0 }} />
+              Pengumuman
+            </Link>
           </div>
         )}
 
@@ -217,7 +402,7 @@ export default function Header({ session }: HeaderProps) {
                 />
               </button>
 
-              {/* Dropdown Panel */}
+              {/* Profile Dropdown Panel */}
               {isProfileOpen && (
                 <div
                   className="rise-in"
@@ -424,19 +609,70 @@ export default function Header({ session }: HeaderProps) {
           </Link>
 
           {/* Mobile nav links */}
-          <div style={{ padding: '8px 8px' }}>
-            {NAV_LINKS.map(({ to, label, icon: Icon }) => (
-              <Link
-                key={to}
-                to={to}
-                onClick={() => setIsMobileOpen(false)}
-                className="mobile-nav-link"
-                activeProps={{ className: 'mobile-nav-link mobile-nav-link-active' }}
+          <div style={{ padding: '8px' }}>
+            {/* Dashboard */}
+            <Link
+              to="/mahasiswa/dashboard"
+              onClick={() => setIsMobileOpen(false)}
+              className="mobile-nav-link"
+              activeProps={{ className: 'mobile-nav-link mobile-nav-link-active' }}
+            >
+              <LayoutDashboard size={16} strokeWidth={2.2} />
+              Dashboard
+            </Link>
+
+            {/* Akademik Group */}
+            <div style={{ margin: '6px 0', padding: '4px 0', borderTop: '1px dashed var(--line)', borderBottom: '1px dashed var(--line)' }}>
+              <div
+                style={{
+                  padding: '4px 12px 6px',
+                  fontSize: 10,
+                  fontWeight: 800,
+                  color: 'var(--sea-ink-soft)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                }}
               >
-                <Icon size={16} strokeWidth={2.2} />
-                {label}
-              </Link>
-            ))}
+                Akademik
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {AKADEMIK_LINKS.map(({ to, label, icon: Icon }) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    onClick={() => setIsMobileOpen(false)}
+                    className="mobile-nav-link"
+                    activeProps={{ className: 'mobile-nav-link mobile-nav-link-active' }}
+                    style={{ paddingLeft: 16 }}
+                  >
+                    <Icon size={15} strokeWidth={2.2} />
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Keuangan */}
+            <Link
+              to="/mahasiswa/keuangan"
+              onClick={() => setIsMobileOpen(false)}
+              className="mobile-nav-link"
+              activeProps={{ className: 'mobile-nav-link mobile-nav-link-active' }}
+            >
+              <Wallet size={16} strokeWidth={2.2} />
+              Keuangan
+            </Link>
+
+            {/* Pengumuman */}
+            <Link
+              to="/mahasiswa/pengumuman"
+              onClick={() => setIsMobileOpen(false)}
+              className="mobile-nav-link"
+              activeProps={{ className: 'mobile-nav-link mobile-nav-link-active' }}
+            >
+              <Megaphone size={16} strokeWidth={2.2} />
+              Pengumuman
+            </Link>
           </div>
 
           {/* Mobile logout */}
@@ -473,3 +709,4 @@ export default function Header({ session }: HeaderProps) {
     </header>
   )
 }
+
