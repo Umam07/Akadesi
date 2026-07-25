@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ShieldCheck,
   User,
+  BookOpen,
 } from 'lucide-react'
 
 interface HeaderProps {
@@ -22,9 +23,10 @@ interface HeaderProps {
 
 const NAV_LINKS = [
   { to: '/mahasiswa/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/mahasiswa/jadwal',   label: 'Jadwal',    icon: CalendarDays },
-  { to: '/mahasiswa/krs',      label: 'KRS',       icon: ClipboardList },
-  { to: '/mahasiswa/khs',      label: 'KHS',       icon: GraduationCap },
+  { to: '/mahasiswa/jadwal', label: 'Jadwal', icon: CalendarDays },
+  { to: '/mahasiswa/matakuliah', label: 'Mata Kuliah', icon: BookOpen },
+  { to: '/mahasiswa/krs', label: 'KRS', icon: ClipboardList },
+  { to: '/mahasiswa/khs', label: 'KHS', icon: GraduationCap },
   { to: '/mahasiswa/pengumuman', label: 'Pengumuman', icon: Megaphone },
 ] as const
 

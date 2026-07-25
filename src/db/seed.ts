@@ -108,61 +108,86 @@ async function seed() {
 
     // 3. Create Courses (Mata Kuliah)
     const courses = [
-      // FTI - Teknik Informatika
-      { kodeMk: 'IF101', namaMk: 'Algoritma dan Pemrograman', sks: 3, semester: 1 },
-      { kodeMk: 'IF102', namaMk: 'Matematika Diskrit', sks: 3, semester: 1 },
-      { kodeMk: 'IF103', namaMk: 'Pengantar Teknologi Informasi', sks: 2, semester: 1 },
-      { kodeMk: 'IF201', namaMk: 'Struktur Data', sks: 3, semester: 2 },
-      { kodeMk: 'IF202', namaMk: 'Sistem Operasi', sks: 3, semester: 2 },
-      { kodeMk: 'IF301', namaMk: 'Sistem Basis Data', sks: 3, semester: 3 },
-      { kodeMk: 'IF302', namaMk: 'Jaringan Komputer', sks: 3, semester: 3 },
-      { kodeMk: 'IF303', namaMk: 'Pemrograman Berorientasi Objek', sks: 4, semester: 3 },
-      { kodeMk: 'IF401', namaMk: 'Rekayasa Perangkat Lunak', sks: 3, semester: 4 },
-      { kodeMk: 'IF402', namaMk: 'Pemrograman Web', sks: 4, semester: 4 },
-      { kodeMk: 'IF501', namaMk: 'Kecerdasan Buatan', sks: 3, semester: 5 },
-      { kodeMk: 'IF502', namaMk: 'Keamanan Informasi', sks: 3, semester: 5 },
-      { kodeMk: 'IF601', namaMk: 'Cloud Computing', sks: 3, semester: 6 },
-      { kodeMk: 'IF701', namaMk: 'Metodologi Penelitian', sks: 2, semester: 7 },
+      // FTI - Teknik Informatika (Semester 1 - 8)
+      { kodeMk: 'IF101', namaMk: 'Algoritma dan Pemrograman', sks: 3, semester: 1, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF102', namaMk: 'Matematika Diskrit', sks: 3, semester: 1, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF103', namaMk: 'Pengantar Teknologi Informasi', sks: 2, semester: 1, jurusan: 'Teknik Informatika', isWajib: true },
       
+      { kodeMk: 'IF201', namaMk: 'Struktur Data', sks: 3, semester: 2, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF202', namaMk: 'Sistem Operasi', sks: 3, semester: 2, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF203', namaMk: 'Aljabar Linier & Matriks', sks: 3, semester: 2, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF204', namaMk: 'Arsitektur Komputer', sks: 3, semester: 2, jurusan: 'Teknik Informatika', isWajib: true },
+
+      { kodeMk: 'IF301', namaMk: 'Sistem Basis Data', sks: 3, semester: 3, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF302', namaMk: 'Jaringan Komputer', sks: 3, semester: 3, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF303', namaMk: 'Pemrograman Berorientasi Objek', sks: 4, semester: 3, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF304', namaMk: 'Statistika & Probabilitas', sks: 3, semester: 3, jurusan: 'Teknik Informatika', isWajib: true },
+
+      { kodeMk: 'IF401', namaMk: 'Rekayasa Perangkat Lunak', sks: 3, semester: 4, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF402', namaMk: 'Pemrograman Web', sks: 4, semester: 4, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF403', namaMk: 'Analisis & Perancangan Algoritma', sks: 3, semester: 4, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF404', namaMk: 'Grafika Komputer', sks: 3, semester: 4, jurusan: 'Teknik Informatika', isWajib: false },
+
+      { kodeMk: 'IF501', namaMk: 'Kecerdasan Buatan', sks: 3, semester: 5, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF502', namaMk: 'Keamanan Informasi', sks: 3, semester: 5, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF503', namaMk: 'Pemrograman Mobile', sks: 3, semester: 5, jurusan: 'Teknik Informatika', isWajib: false },
+      { kodeMk: 'IF504', namaMk: 'Pengolahan Citra Digital', sks: 3, semester: 5, jurusan: 'Teknik Informatika', isWajib: false },
+
+      { kodeMk: 'IF601', namaMk: 'Cloud Computing', sks: 3, semester: 6, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF602', namaMk: 'Machine Learning & Data Mining', sks: 3, semester: 6, jurusan: 'Teknik Informatika', isWajib: false },
+      { kodeMk: 'IF603', namaMk: 'Interaksi Manusia & Komputer', sks: 3, semester: 6, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF604', namaMk: 'Internet of Things (IoT)', sks: 3, semester: 6, jurusan: 'Teknik Informatika', isWajib: false },
+
+      { kodeMk: 'IF701', namaMk: 'Metodologi Penelitian', sks: 2, semester: 7, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF702', namaMk: 'Kerja Praktek / Magang', sks: 4, semester: 7, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF703', namaMk: 'Etika Profesi & Technopreneurship', sks: 2, semester: 7, jurusan: 'Teknik Informatika', isWajib: true },
+      { kodeMk: 'IF704', namaMk: 'Kapita Selekta Informatika', sks: 3, semester: 7, jurusan: 'Teknik Informatika', isWajib: false },
+
+      { kodeMk: 'IF801', namaMk: 'Skripsi / Tugas Akhir', sks: 6, semester: 8, jurusan: 'Teknik Informatika', isWajib: true },
+
       // FTI - Sistem Informasi
-      { kodeMk: 'SI101', namaMk: 'Dasar-Dasar Sistem Informasi', sks: 3, semester: 1 },
-      { kodeMk: 'SI201', namaMk: 'Analisis dan Perancangan Sistem', sks: 3, semester: 2 },
-      { kodeMk: 'SI301', namaMk: 'Manajemen Basis Data', sks: 3, semester: 3 },
-      { kodeMk: 'SI302', namaMk: 'Desain Pengalaman Pengguna (UX)', sks: 3, semester: 3 },
-      { kodeMk: 'SI401', namaMk: 'E-Business', sks: 3, semester: 4 },
+      { kodeMk: 'SI101', namaMk: 'Dasar-Dasar Sistem Informasi', sks: 3, semester: 1, jurusan: 'Sistem Informasi', isWajib: true },
+      { kodeMk: 'SI201', namaMk: 'Analisis dan Perancangan Sistem', sks: 3, semester: 2, jurusan: 'Sistem Informasi', isWajib: true },
+      { kodeMk: 'SI301', namaMk: 'Manajemen Basis Data', sks: 3, semester: 3, jurusan: 'Sistem Informasi', isWajib: true },
+      { kodeMk: 'SI302', namaMk: 'Desain Pengalaman Pengguna (UX)', sks: 3, semester: 3, jurusan: 'Sistem Informasi', isWajib: true },
+      { kodeMk: 'SI401', namaMk: 'E-Business', sks: 3, semester: 4, jurusan: 'Sistem Informasi', isWajib: true },
+      { kodeMk: 'SI501', namaMk: 'Manajemen Proyek TI', sks: 3, semester: 5, jurusan: 'Sistem Informasi', isWajib: true },
+      { kodeMk: 'SI601', namaMk: 'Audit Sistem Informasi', sks: 3, semester: 6, jurusan: 'Sistem Informasi', isWajib: false },
+      { kodeMk: 'SI701', namaMk: 'Tata Kelola TI', sks: 3, semester: 7, jurusan: 'Sistem Informasi', isWajib: true },
 
       // FEB - Akuntansi
-      { kodeMk: 'AK101', namaMk: 'Pengantar Akuntansi I', sks: 3, semester: 1 },
-      { kodeMk: 'AK102', namaMk: 'Pengantar Bisnis', sks: 2, semester: 1 },
-      { kodeMk: 'AK201', namaMk: 'Pengantar Akuntansi II', sks: 3, semester: 2 },
-      { kodeMk: 'AK301', namaMk: 'Akuntansi Keuangan Menengah I', sks: 3, semester: 3 },
-      { kodeMk: 'AK401', namaMk: 'Akuntansi Keuangan Menengah II', sks: 3, semester: 4 },
-      { kodeMk: 'AK501', namaMk: 'Akuntansi Biaya', sks: 3, semester: 5 },
-      { kodeMk: 'AK601', namaMk: 'Perpajakan', sks: 3, semester: 6 },
-      { kodeMk: 'AK701', namaMk: 'Auditing I', sks: 3, semester: 7 },
-      { kodeMk: 'AK702', namaMk: 'Akuntansi Sektor Publik', sks: 3, semester: 7 },
+      { kodeMk: 'AK101', namaMk: 'Pengantar Akuntansi I', sks: 3, semester: 1, jurusan: 'Akuntansi', isWajib: true },
+      { kodeMk: 'AK102', namaMk: 'Pengantar Bisnis', sks: 2, semester: 1, jurusan: 'Akuntansi', isWajib: true },
+      { kodeMk: 'AK201', namaMk: 'Pengantar Akuntansi II', sks: 3, semester: 2, jurusan: 'Akuntansi', isWajib: true },
+      { kodeMk: 'AK301', namaMk: 'Akuntansi Keuangan Menengah I', sks: 3, semester: 3, jurusan: 'Akuntansi', isWajib: true },
+      { kodeMk: 'AK401', namaMk: 'Akuntansi Keuangan Menengah II', sks: 3, semester: 4, jurusan: 'Akuntansi', isWajib: true },
+      { kodeMk: 'AK501', namaMk: 'Akuntansi Biaya', sks: 3, semester: 5, jurusan: 'Akuntansi', isWajib: true },
+      { kodeMk: 'AK601', namaMk: 'Perpajakan', sks: 3, semester: 6, jurusan: 'Akuntansi', isWajib: true },
+      { kodeMk: 'AK701', namaMk: 'Auditing I', sks: 3, semester: 7, jurusan: 'Akuntansi', isWajib: true },
+      { kodeMk: 'AK702', namaMk: 'Akuntansi Sektor Publik', sks: 3, semester: 7, jurusan: 'Akuntansi', isWajib: false },
 
       // FK - Kedokteran Umum
-      { kodeMk: 'KU101', namaMk: 'Biologi Sel dan Genetika', sks: 4, semester: 1 },
-      { kodeMk: 'KU102', namaMk: 'Anatomi Dasar', sks: 4, semester: 1 },
-      { kodeMk: 'KU201', namaMk: 'Fisiologi Manusia', sks: 4, semester: 2 },
-      { kodeMk: 'KU202', namaMk: 'Biokimia Kedokteran', sks: 3, semester: 2 },
-      { kodeMk: 'KU301', namaMk: 'Farmakologi Dasar', sks: 4, semester: 3 },
-      { kodeMk: 'KU302', namaMk: 'Patologi Anatomi', sks: 3, semester: 3 },
-      { kodeMk: 'KU401', namaMk: 'Mikrobiologi Kedokteran', sks: 4, semester: 4 },
+      { kodeMk: 'KU101', namaMk: 'Biologi Sel dan Genetika', sks: 4, semester: 1, jurusan: 'Kedokteran Umum', isWajib: true },
+      { kodeMk: 'KU102', namaMk: 'Anatomi Dasar', sks: 4, semester: 1, jurusan: 'Kedokteran Umum', isWajib: true },
+      { kodeMk: 'KU201', namaMk: 'Fisiologi Manusia', sks: 4, semester: 2, jurusan: 'Kedokteran Umum', isWajib: true },
+      { kodeMk: 'KU202', namaMk: 'Biokimia Kedokteran', sks: 3, semester: 2, jurusan: 'Kedokteran Umum', isWajib: true },
+      { kodeMk: 'KU301', namaMk: 'Farmakologi Dasar', sks: 4, semester: 3, jurusan: 'Kedokteran Umum', isWajib: true },
+      { kodeMk: 'KU302', namaMk: 'Patologi Anatomi', sks: 3, semester: 3, jurusan: 'Kedokteran Umum', isWajib: true },
+      { kodeMk: 'KU401', namaMk: 'Mikrobiologi Kedokteran', sks: 4, semester: 4, jurusan: 'Kedokteran Umum', isWajib: true },
 
       // FH - Ilmu Hukum
-      { kodeMk: 'HK101', namaMk: 'Pengantar Ilmu Hukum', sks: 3, semester: 1 },
-      { kodeMk: 'HK102', namaMk: 'Pengantar Hukum Indonesia', sks: 3, semester: 1 },
-      { kodeMk: 'HK201', namaMk: 'Hukum Perdata', sks: 3, semester: 2 },
-      { kodeMk: 'HK202', namaMk: 'Hukum Pidana', sks: 3, semester: 2 },
-      { kodeMk: 'HK301', namaMk: 'Hukum Tata Negara', sks: 3, semester: 3 },
-      { kodeMk: 'HK401', namaMk: 'Hukum Administrasi Negara', sks: 3, semester: 4 },
+      { kodeMk: 'HK101', namaMk: 'Pengantar Ilmu Hukum', sks: 3, semester: 1, jurusan: 'Ilmu Hukum', isWajib: true },
+      { kodeMk: 'HK102', namaMk: 'Pengantar Hukum Indonesia', sks: 3, semester: 1, jurusan: 'Ilmu Hukum', isWajib: true },
+      { kodeMk: 'HK201', namaMk: 'Hukum Perdata', sks: 3, semester: 2, jurusan: 'Ilmu Hukum', isWajib: true },
+      { kodeMk: 'HK202', namaMk: 'Hukum Pidana', sks: 3, semester: 2, jurusan: 'Ilmu Hukum', isWajib: true },
+      { kodeMk: 'HK301', namaMk: 'Hukum Tata Negara', sks: 3, semester: 3, jurusan: 'Ilmu Hukum', isWajib: true },
+      { kodeMk: 'HK401', namaMk: 'Hukum Administrasi Negara', sks: 3, semester: 4, jurusan: 'Ilmu Hukum', isWajib: true },
 
-      // Mata Kuliah Umum
-      { kodeMk: 'UM101', namaMk: 'Pancasila dan Kewarganegaraan', sks: 2, semester: 1 },
-      { kodeMk: 'UM102', namaMk: 'Bahasa Indonesia', sks: 2, semester: 1 },
-      { kodeMk: 'UM103', namaMk: 'Bahasa Inggris Akademik', sks: 2, semester: 1 },
+      // Mata Kuliah Umum (Untuk Semua Jurusan)
+      { kodeMk: 'UM101', namaMk: 'Pancasila dan Kewarganegaraan', sks: 2, semester: 1, jurusan: null, isWajib: true },
+      { kodeMk: 'UM102', namaMk: 'Bahasa Indonesia', sks: 2, semester: 1, jurusan: null, isWajib: true },
+      { kodeMk: 'UM103', namaMk: 'Bahasa Inggris Akademik', sks: 2, semester: 1, jurusan: null, isWajib: true },
+      { kodeMk: 'UM104', namaMk: 'Pendidikan Agama & Etika', sks: 2, semester: 2, jurusan: null, isWajib: true },
     ];
 
     const insertedCourses = await db.insert(mataKuliah).values(courses).returning();

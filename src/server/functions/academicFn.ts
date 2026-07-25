@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { dbMiddleware } from '../../db/middleware'
 import { mahasiswa, krsItem, jadwal, mataKuliah, dosen, pengumuman, pengumumanDibaca, khs } from '../../db/schema'
-import { eq, and, desc, inArray } from 'drizzle-orm'
+import { eq, and, desc, inArray, or, isNull } from 'drizzle-orm'
 import { getSession } from '../../lib/auth'
 
 // Helper to check auth and get student ID
@@ -795,3 +795,101 @@ export const getProfileData = createServerFn({ method: 'GET' })
       student: studentInfo
     }
   })
+
+// 9. Get Mata Kuliah (Curriculum) Data Function
+export const getMataKuliahData = createServerFn({ method: 'GET' })
+  .middleware([dbMiddleware])
+  .handler(async ({ context }) => {
+    const db = context.db
+    const session = await requireAuth()
+    const studentId = session.id
+
+    const studentInfo = await db.query.mahasiswa.findFirst({
+      where: eq(mahasiswa.id, studentId)
+    })
+
+    if (!studentInfo) {
+      throw new Error('Data mahasiswa tidak ditemukan')
+    }
+
+    const studentJurusan = studentInfo.jurusan || 'Teknik Informatika'
+
+    // Fetch courses matching student's major OR general courses (jurusan is null)
+    const coursesList = await db
+      .select({
+        id: mataKuliah.id,
+        kodeMk: mataKuliah.kodeMk,
+        namaMk: mataKuliah.namaMk,
+        sks: mataKuliah.sks,
+        semester: mataKuliah.semester,
+        jurusan: mataKuliah.jurusan,
+        isWajib: mataKuliah.isWajib,
+      })
+      .from(mataKuliah)
+      .where(
+        or(
+          eq(mataKuliah.jurusan, studentJurusan),
+          isNull(mataKuliah.jurusan)
+        )
+      )
+
+    // Calculate summary statistics
+    const totalMatkul = coursesList.length
+    let totalSksKurikulum = 0
+    let totalSksWajib = 0
+    let totalSksPilihan = 0
+    let countWajib = 0
+    let countPilihan = 0
+
+    // Group by semester
+    const semMap = new Map<number, typeof coursesList>()
+    for (let s = 1; s <= 8; s++) {
+      semMap.set(s, [])
+    }
+
+    for (const item of coursesList) {
+      totalSksKurikulum += item.sks
+      if (item.isWajib) {
+        totalSksWajib += item.sks
+        countWajib++
+      } else {
+        totalSksPilihan += item.sks
+        countPilihan++
+      }
+
+      const list = semMap.get(item.semester) || []
+      list.push(item)
+      semMap.set(item.semester, list)
+    }
+
+    // Sort items inside each semester by kodeMk
+    const coursesBySemester = Array.from(semMap.entries())
+      .map(([semester, courses]) => {
+        courses.sort((a, b) => a.kodeMk.localeCompare(b.kodeMk))
+        const totalSksSem = courses.reduce((acc, c) => acc + c.sks, 0)
+        return {
+          semester,
+          courses,
+          totalSks: totalSksSem,
+          wajibCount: courses.filter(c => c.isWajib).length,
+          pilihanCount: courses.filter(c => !c.isWajib).length,
+        }
+      })
+      .filter(sem => sem.courses.length > 0)
+
+    return {
+      student: studentInfo,
+      jurusan: studentJurusan,
+      stats: {
+        totalMatkul,
+        totalSksKurikulum,
+        totalSksWajib,
+        totalSksPilihan,
+        countWajib,
+        countPilihan,
+      },
+      coursesBySemester,
+      allCourses: coursesList,
+    }
+  })
+
