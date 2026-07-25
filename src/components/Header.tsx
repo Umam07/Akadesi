@@ -13,7 +13,6 @@ import {
   Menu,
   X,
   ChevronDown,
-  ShieldCheck,
   User,
   BookOpen,
   Wallet,
