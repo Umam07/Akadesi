@@ -102,12 +102,16 @@ function JadwalPage() {
 
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
-  // Routine schedule state
-  const [activeDay, setActiveDay] = useState(() => {
+  // Today's Day Name helper
+  const todayIndo = useMemo(() => {
     const todayIndex = new Date().getDay()
     const indonesianDays = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
-    const todayDayName = indonesianDays[todayIndex]
-    return DAYS.includes(todayDayName) ? todayDayName : 'Senin'
+    return indonesianDays[todayIndex]
+  }, [])
+
+  // Routine schedule state
+  const [activeDay, setActiveDay] = useState(() => {
+    return DAYS.includes(todayIndo) ? todayIndo : 'Senin'
   })
   
   const [viewMode, setViewMode] = useState<'harian' | 'mingguan'>('harian')
@@ -129,10 +133,6 @@ function JadwalPage() {
 
   // Helper to check if a class is currently active (ongoing)
   const isClassOngoing = (day: string, startTimeStr: string, endTimeStr: string) => {
-    const todayIndex = new Date().getDay()
-    const indonesianDays = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
-    const todayIndo = indonesianDays[todayIndex]
-    
     if (todayIndo.toLowerCase() !== day.toLowerCase()) return false
 
     const now = new Date()
@@ -196,7 +196,7 @@ function JadwalPage() {
     return kalenderAkademik.filter(m => m.kategori === calendarCategory)
   }, [kalenderAkademik, calendarCategory])
 
-  // RenderRoutineCard Component
+  // Render Routine Class Card Component
   const renderClassCard = (classItem: typeof schedule[0], showDayBadge = false) => {
     const timeDetails = getTimeSlotDetails(classItem.jamMulai)
     const TimeIcon = timeDetails.icon
@@ -213,89 +213,94 @@ function JadwalPage() {
     return (
       <div
         key={classItem.id}
-        className={`demo-card relative transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between gap-4 p-5 border border-[var(--line)]/60 ${timeDetails.cardClass} ${
-          isOngoing ? 'ring-2 ring-emerald-500/80 ring-offset-2 ring-offset-[var(--bg-base)]' : ''
+        className={`group relative transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between gap-5 p-5 md:p-6 rounded-2xl border ${
+          isOngoing 
+            ? 'bg-gradient-to-br from-emerald-50/90 via-white to-emerald-50/40 border-emerald-500/80 shadow-md ring-2 ring-emerald-500/40 ring-offset-2' 
+            : 'bg-white/90 border-[var(--line)]/60 hover:border-[var(--lagoon-deep)]/40 shadow-sm'
         }`}
       >
         {isOngoing && (
-          <div className="absolute -top-2.5 right-4 bg-emerald-600 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full shadow-sm tracking-wider flex items-center gap-1.5 uppercase border border-emerald-400 animate-pulse">
-            <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
+          <div className="absolute -top-3 right-4 bg-emerald-600 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md tracking-wider flex items-center gap-1.5 uppercase border border-emerald-300 animate-pulse z-10">
+            <span className="h-2 w-2 rounded-full bg-white animate-ping" />
             Sedang Berlangsung
           </div>
         )}
 
-        <div>
-          {/* Top meta tags */}
-          <div className="flex justify-between items-center gap-2">
+        <div className="space-y-3.5">
+          {/* Header Row: Kode MK & Badge SKS */}
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold uppercase tracking-wide text-[var(--sea-ink-soft)] bg-[var(--chip-bg)] px-2 py-0.5 rounded border border-[var(--chip-line)]">
+              <span className="text-xs font-mono font-black uppercase tracking-wider text-[var(--sea-ink)] bg-[var(--chip-bg)] px-2.5 py-1 rounded-lg border border-[var(--chip-line)] shadow-2xs">
                 {classItem.kodeMk}
               </span>
               {showDayBadge && (
-                <span className="text-[10px] font-black uppercase tracking-wider text-[var(--sea-ink)] bg-[var(--sand)] px-2 py-0.5 rounded border border-[var(--line)]">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--sea-ink)] bg-[var(--sand)] px-2.5 py-1 rounded-lg border border-[var(--line)]">
                   {classItem.hari}
                 </span>
               )}
             </div>
-            
-            <span className="text-xs font-bold text-[var(--sea-ink)] bg-white/70 px-2 py-1 rounded border border-[var(--line)]/50">
-              {classItem.sks} SKS
-            </span>
+
+            <div className="flex items-center gap-1.5 text-xs font-black text-[var(--sea-ink)] bg-slate-100/80 border border-slate-200/80 px-2.5 py-1 rounded-lg">
+              <BookOpenCheck className="h-3.5 w-3.5 text-[var(--lagoon-deep)]" />
+              <span>{classItem.sks} SKS</span>
+            </div>
           </div>
 
           {/* Title */}
-          <h3 className="text-lg font-extrabold text-[var(--sea-ink)] mt-3 leading-snug tracking-tight">
+          <h3 className="text-lg font-extrabold text-[var(--sea-ink)] leading-snug tracking-tight group-hover:text-[var(--lagoon-deep)] transition-colors">
             {classItem.namaMk}
           </h3>
 
-          {/* Details (Dosen & Ruang) */}
-          <div className="mt-4 flex flex-col gap-3">
-            {/* Lecturer row */}
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border shrink-0 ${avatarColor}`}>
+          {/* Lecturer & Location Details Grid */}
+          <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+            {/* Lecturer Card */}
+            <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50/70 border border-slate-100/90 hover:bg-slate-50 transition-colors">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black border shrink-0 ${avatarColor}`}>
                 {lecturerInitials}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-[9px] font-bold text-[var(--sea-ink-soft)] uppercase tracking-wider">Dosen Pengampu</span>
-                <span className="text-xs font-semibold text-[var(--sea-ink)] truncate">{classItem.namaDosen}</span>
+                <span className="text-[9px] font-bold text-[var(--sea-ink-soft)] uppercase tracking-wider">Dosen</span>
+                <span className="text-xs font-bold text-[var(--sea-ink)] truncate">{classItem.namaDosen}</span>
               </div>
             </div>
 
-            {/* Room row */}
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-[var(--sea-ink-soft)] shrink-0">
+            {/* Room Card */}
+            <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50/70 border border-slate-100/90 hover:bg-slate-50 transition-colors">
+              <div className="w-8 h-8 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-[var(--lagoon-deep)] shrink-0 shadow-2xs">
                 <MapPin className="h-4 w-4 text-[var(--lagoon-deep)]" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-bold text-[var(--sea-ink-soft)] uppercase tracking-wider">Lokasi / Ruang</span>
-                <span className="text-xs font-semibold text-[var(--sea-ink)]">{classItem.ruangan}</span>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[9px] font-bold text-[var(--sea-ink-soft)] uppercase tracking-wider">Ruang</span>
+                <span className="text-xs font-bold text-[var(--sea-ink)] truncate">{classItem.ruangan}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Card Footer */}
-        <div className="border-t border-[var(--line)]/40 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Footer Row: Time Badge & Action Buttons */}
+        <div className="pt-3 border-t border-[var(--line)]/40 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border ${timeDetails.colorClass}`}>
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-extrabold border ${timeDetails.colorClass}`}>
               <TimeIcon className="h-3.5 w-3.5" />
               {timeDetails.type}
             </span>
-            <span className="text-sm font-black text-[var(--sea-ink)]">
-              {classItem.jamMulai.substring(0, 5)} - {classItem.jamSelesai.substring(0, 5)}
+            <span className="text-xs sm:text-sm font-black text-[var(--sea-ink)] tracking-tight">
+              {classItem.jamMulai.substring(0, 5)} - {classItem.jamSelesai.substring(0, 5)} WIB
             </span>
           </div>
 
-          <div className="flex items-center gap-1 border-t sm:border-t-0 pt-2 sm:pt-0 border-[var(--line)]/20 justify-end">
+          <div className="flex items-center gap-1">
             <button 
-              title="Bahan Kuliah"
-              className="p-2 text-[var(--sea-ink-soft)] hover:text-[var(--lagoon-deep)] hover:bg-[var(--sand)]/50 rounded-lg transition-colors cursor-pointer"
+              onClick={() => showToast(`Membuka modul materi untuk ${classItem.namaMk}...`)}
+              title="Bahan Kuliah & Modul"
+              className="p-2 text-[var(--sea-ink-soft)] hover:text-[var(--lagoon-deep)] hover:bg-[var(--foam)] rounded-xl transition-all cursor-pointer border border-transparent hover:border-[var(--chip-line)]"
             >
               <BookOpenCheck className="h-4 w-4" />
             </button>
             <button 
-              title="Akses Kelas Online"
-              className="p-2 text-[var(--sea-ink-soft)] hover:text-[var(--lagoon-deep)] hover:bg-[var(--sand)]/50 rounded-lg transition-colors cursor-pointer"
+              onClick={() => showToast(`Tautan kelas online ${classItem.namaMk} disalin!`)}
+              title="Akses Ruang E-Learning"
+              className="p-2 text-[var(--sea-ink-soft)] hover:text-[var(--lagoon-deep)] hover:bg-[var(--foam)] rounded-xl transition-all cursor-pointer border border-transparent hover:border-[var(--chip-line)]"
             >
               <ExternalLink className="h-4 w-4" />
             </button>
@@ -732,14 +737,15 @@ function JadwalPage() {
       {scheduleType === 'rutin' ? (
         /* ROUTINE SCHEDULE DISPLAY */
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="inline-flex p-1 bg-white/60 border border-[var(--line)]/50 rounded-2xl shadow-inner w-fit">
+          {/* Controls Header Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/70 border border-[var(--line)]/60 p-3 rounded-2xl shadow-xs">
+            <div className="inline-flex p-1 bg-slate-100/80 border border-slate-200/80 rounded-xl shadow-inner w-fit">
               <button
                 onClick={() => setViewMode('harian')}
-                className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 text-xs font-black rounded-lg transition-all cursor-pointer ${
                   viewMode === 'harian'
                     ? 'bg-gradient-to-r from-[var(--sea-ink)] to-[#1b434a] text-white shadow-sm'
-                    : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/40'
+                    : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/60'
                 }`}
               >
                 <List className="h-3.5 w-3.5" />
@@ -747,10 +753,10 @@ function JadwalPage() {
               </button>
               <button
                 onClick={() => setViewMode('mingguan')}
-                className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 text-xs font-black rounded-lg transition-all cursor-pointer ${
                   viewMode === 'mingguan'
                     ? 'bg-gradient-to-r from-[var(--sea-ink)] to-[#1b434a] text-white shadow-sm'
-                    : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/40'
+                    : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/60'
                 }`}
               >
                 <LayoutGrid className="h-3.5 w-3.5" />
@@ -758,47 +764,45 @@ function JadwalPage() {
               </button>
             </div>
 
-            <div className="text-[11px] font-medium text-[var(--sea-ink-soft)] flex items-center gap-2 bg-[var(--chip-bg)] border border-[var(--chip-line)] px-3 py-1.5 rounded-xl shadow-sm">
-              <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-              <span>Tips: Kartu dengan badge berkedip menandakan kuliah sedang berjalan sekarang.</span>
+            <div className="text-[11px] font-bold text-[var(--sea-ink-soft)] flex items-center gap-2 bg-[var(--chip-bg)] border border-[var(--chip-line)] px-3 py-2 rounded-xl shadow-2xs">
+              <Sparkles className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+              <span>Kuliah dengan badge & ring hijau menandakan kelas sedang berjalan aktif.</span>
             </div>
           </div>
 
           {viewMode === 'harian' ? (
             <div className="flex flex-col gap-6">
-              <div className="flex overflow-x-auto gap-2 py-2.5 px-1 scrollbar-none border-b border-[var(--line)]/50">
+              {/* Day Filter Bar */}
+              <div className="flex items-center gap-2 overflow-x-auto py-1 px-1 scrollbar-none border-b border-[var(--line)]/50">
                 {DAYS.map((day) => {
                   const isActive = day === activeDay
                   const classCount = classesCountByDay[day]
                   const hasClasses = classCount > 0
-                  
-                  const todayIndex = new Date().getDay()
-                  const indonesianDays = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
-                  const isToday = indonesianDays[todayIndex] === day
+                  const isToday = todayIndo === day
 
                   return (
                     <button
                       key={day}
                       onClick={() => setActiveDay(day)}
-                      className={`px-5 py-3 rounded-2xl transition-all cursor-pointer border flex flex-col items-center gap-1 min-w-[96px] text-center select-none ${
+                      className={`px-4.5 py-3 rounded-2xl transition-all cursor-pointer border flex flex-col items-center gap-1.5 min-w-[100px] text-center select-none shrink-0 ${
                         isActive
-                          ? 'border-[var(--lagoon-deep)] bg-white text-[var(--sea-ink)] shadow-md shadow-[var(--lagoon-deep)]/10 font-extrabold scale-[1.02] ring-2 ring-[var(--lagoon-deep)]/20'
-                          : 'border-[var(--line)]/20 bg-white/40 text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/80 hover:scale-[1.01]'
+                          ? 'border-[var(--lagoon-deep)] bg-gradient-to-br from-[var(--sea-ink)] to-[#154147] text-white shadow-md font-extrabold scale-[1.02] ring-2 ring-[var(--lagoon-deep)]/20'
+                          : 'border-[var(--line)]/40 bg-white/70 text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white hover:border-[var(--line)]'
                       }`}
                     >
                       <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-extrabold">{day}</span>
+                        <span className="text-sm font-black">{day}</span>
                         {isToday && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 ring-2 ring-emerald-200" title="Hari Ini" />
+                          <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-emerald-400 ring-2 ring-emerald-300/40' : 'bg-emerald-500 ring-2 ring-emerald-200'}`} title="Hari Ini" />
                         )}
                       </div>
                       
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
                         isActive 
-                          ? 'bg-[var(--sand)] text-[var(--sea-ink)]' 
+                          ? 'bg-white/20 text-white border border-white/20' 
                           : hasClasses 
-                          ? 'bg-slate-100 text-slate-600'
-                          : 'bg-transparent text-slate-400'
+                          ? 'bg-[var(--foam)] text-[var(--lagoon-deep)] border border-[var(--chip-line)]'
+                          : 'bg-slate-100 text-slate-400'
                       }`}>
                         {hasClasses ? `${classCount} Kelas` : 'Libur'}
                       </span>
@@ -807,20 +811,55 @@ function JadwalPage() {
                 })}
               </div>
 
+              {/* Day Header Banner */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/70 border border-[var(--line)]/60 p-4 rounded-2xl shadow-2xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--foam)] border border-[var(--chip-line)] flex items-center justify-center text-[var(--lagoon-deep)] font-extrabold shrink-0 shadow-2xs">
+                    <CalendarDays className="h-5 w-5 text-[var(--lagoon-deep)]" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-black text-[var(--sea-ink)]">
+                        Jadwal Kuliah Hari {activeDay}
+                      </h3>
+                      {activeDay === todayIndo && (
+                        <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                          Hari Ini
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-[var(--sea-ink-soft)] font-medium mt-0.5">
+                      Total {sortedDailySchedule.reduce((sum, item) => sum + item.sks, 0)} SKS dari {sortedDailySchedule.length} perkuliahan terdaftar.
+                    </p>
+                  </div>
+                </div>
+
+                {activeDay !== todayIndo && (
+                  <button
+                    onClick={() => setActiveDay(todayIndo)}
+                    className="text-xs font-black text-[var(--lagoon-deep)] bg-[var(--foam)] hover:bg-[var(--sand)]/80 border border-[var(--chip-line)] px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 justify-center cursor-pointer shrink-0"
+                  >
+                    <Clock className="h-3.5 w-3.5" />
+                    Lompat ke Hari Ini ({todayIndo})
+                  </button>
+                )}
+              </div>
+
+              {/* Daily Schedule Cards */}
               <div className="min-h-[250px] transition-all duration-300">
                 {sortedDailySchedule.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {sortedDailySchedule.map((classItem) => renderClassCard(classItem))}
                   </div>
                 ) : (
-                  <div className="demo-panel border border-dashed border-[var(--sea-ink-soft)]/20 rounded-2xl text-center py-20 px-6 bg-white/20 max-w-xl mx-auto flex flex-col items-center justify-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500">
+                  <div className="demo-panel border border-dashed border-[var(--sea-ink-soft)]/20 rounded-2xl text-center py-16 px-6 bg-white/40 max-w-lg mx-auto flex flex-col items-center justify-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-2xs">
                       <Sparkles className="h-7 w-7" />
                     </div>
                     <div>
-                      <h4 className="font-extrabold text-[var(--sea-ink)] text-lg">Hari Bebas Kuliah!</h4>
-                      <p className="text-xs text-[var(--sea-ink-soft)] mt-1.5 leading-relaxed max-w-sm mx-auto">
-                        Anda tidak memiliki jadwal kelas yang terdaftar pada hari {activeDay}. Gunakan waktu senggang Anda untuk belajar mandiri atau beristirahat.
+                      <h4 className="font-black text-[var(--sea-ink)] text-lg">Hari Bebas Perkuliahan!</h4>
+                      <p className="text-xs text-[var(--sea-ink-soft)] mt-1.5 leading-relaxed max-w-sm mx-auto font-medium">
+                        Tidak ada jadwal kelas kuliah pada hari {activeDay}. Manfaatkan waktu ini untuk belajar mandiri, diskusi kelompok, atau beristirahat.
                       </p>
                     </div>
                   </div>
@@ -828,47 +867,67 @@ function JadwalPage() {
               </div>
             </div>
           ) : (
+            /* Weekly View */
             <div className="flex flex-col gap-8 transition-all duration-300">
               {DAYS.map(day => {
                 const daySchedule = groupedWeeklySchedule[day]
                 const hasClasses = daySchedule.length > 0
-                
-                const todayIndex = new Date().getDay()
-                const indonesianDays = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
-                const isToday = indonesianDays[todayIndex] === day
+                const isToday = todayIndo === day
+                const daySks = daySchedule.reduce((sum, item) => sum + item.sks, 0)
 
                 return (
                   <div 
                     key={day} 
-                    className={`demo-panel p-5 rounded-2xl border transition-all ${
+                    className={`p-6 rounded-2xl border transition-all ${
                       isToday 
-                        ? 'border-[var(--lagoon-deep)] bg-gradient-to-r from-white to-[var(--foam)]/30 shadow-md shadow-[var(--lagoon-deep)]/5' 
-                        : 'border-[var(--line)]/50 bg-white/40'
+                        ? 'border-[var(--lagoon-deep)] bg-gradient-to-br from-white via-white to-[var(--foam)]/40 shadow-md ring-1 ring-[var(--lagoon-deep)]/30' 
+                        : 'border-[var(--line)]/60 bg-white/60 shadow-xs'
                     }`}
                   >
-                    <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--line)]/20">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-black text-[var(--sea-ink)] text-base tracking-tight">{day}</h4>
-                        {isToday && (
-                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-white bg-emerald-600 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
-                            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                            Hari Ini
-                          </span>
-                        )}
+                    {/* Day Section Header */}
+                    <div className="flex items-center justify-between pb-4 mb-5 border-b border-[var(--line)]/40">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm border ${
+                          isToday ? 'bg-[var(--sea-ink)] text-white border-transparent shadow-2xs' : 'bg-slate-100 text-[var(--sea-ink)] border-slate-200'
+                        }`}>
+                          {day.substring(0, 3)}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-black text-[var(--sea-ink)] text-lg tracking-tight">{day}</h4>
+                            {isToday && (
+                              <span className="text-[10px] font-black uppercase tracking-widest text-white bg-emerald-600 px-2.5 py-0.5 rounded-full shadow-2xs flex items-center gap-1.5">
+                                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                                Hari Ini
+                              </span>
+                            )}
+                          </div>
+                          {hasClasses && (
+                            <span className="text-xs text-[var(--sea-ink-soft)] font-semibold">
+                              {daySks} SKS Total Perkuliahan
+                            </span>
+                          )}
+                        </div>
                       </div>
                       
-                      <span className="text-xs font-bold text-[var(--sea-ink-soft)] bg-white/60 border border-[var(--line)] px-2.5 py-1 rounded-xl">
+                      <span className={`text-xs font-black px-3 py-1 rounded-xl border ${
+                        hasClasses 
+                          ? 'bg-[var(--foam)] text-[var(--lagoon-deep)] border-[var(--chip-line)]'
+                          : 'bg-slate-100/70 text-slate-500 border-slate-200/70'
+                      }`}>
                         {hasClasses ? `${daySchedule.length} Mata Kuliah` : 'Libur Kuliah'}
                       </span>
                     </div>
 
+                    {/* Day Class Grid */}
                     {hasClasses ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         {daySchedule.map((classItem) => renderClassCard(classItem, false))}
                       </div>
                     ) : (
-                      <div className="text-center py-6 text-xs text-[var(--sea-ink-soft)] font-medium italic">
-                        Tidak ada jadwal kuliah kelas pada hari {day}.
+                      <div className="text-center py-8 text-xs text-[var(--sea-ink-soft)] font-semibold bg-slate-50/50 rounded-xl border border-dashed border-slate-200/80 flex items-center justify-center gap-2">
+                        <CalendarDays className="h-4 w-4 text-slate-400" />
+                        <span>Tidak ada jadwal perkuliahan pada hari {day}.</span>
                       </div>
                     )}
                   </div>
