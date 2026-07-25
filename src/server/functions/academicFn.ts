@@ -791,10 +791,36 @@ export const getProfileData = createServerFn({ method: 'GET' })
       throw new Error('Data mahasiswa tidak ditemukan')
     }
 
+    const academicDetails = {
+      dosenWali: 'Dr. Ir. Hendra Wijaya, M.T.',
+      dosenWaliNip: '198204152010121003',
+      angkatan: '2024',
+      jenjang: 'S1 (Sarjana)',
+      sistemKuliah: 'Reguler A',
+      jalurMasuk: 'SNBT (Seleksi Nasional Berdasarkan Tes)',
+      kurikulum: 'Kurikulum 2024 (Revisi Utama)',
+      nik: '32710428****0003',
+      tempatTanggalLahir: 'Jakarta, 28 April 2004',
+      jenisKelamin: 'Laki-Laki',
+      agama: 'Islam',
+      statusPernikahan: 'Belum Menikah',
+      kewarganegaraan: 'WNI',
+      namaIbuKandung: 'Siti Rahmah',
+      statusRegUlang: 'Terverifikasi / Aktif',
+      beasiswa: 'Beasiswa KIP-Kuliah (100% Free UKT)',
+      ktmExpiry: '31 Agustus 2028',
+      terakhirLogin: 'Hari ini, 08:30 WIB',
+      ssoStatus: 'Aktif (SIAKAD SSO Integrated)',
+    }
+
     return {
-      student: studentInfo
+      student: {
+        ...studentInfo,
+        ...academicDetails,
+      }
     }
   })
+
 
 // 9. Get Mata Kuliah (Curriculum) Data Function
 export const getMataKuliahData = createServerFn({ method: 'GET' })
