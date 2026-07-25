@@ -334,7 +334,7 @@ function JadwalPage() {
         <div className="flex flex-col gap-6">
           
           {/* Days Navigation Tabs */}
-          <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-none border-b border-[var(--line)]/50">
+          <div className="flex overflow-x-auto gap-2 py-2.5 px-1 scrollbar-none border-b border-[var(--line)]/50">
             {DAYS.map((day) => {
               const isActive = day === activeDay
               const classCount = classesCountByDay[day]
@@ -351,8 +351,8 @@ function JadwalPage() {
                   onClick={() => setActiveDay(day)}
                   className={`px-5 py-3 rounded-2xl transition-all cursor-pointer border flex flex-col items-center gap-1 min-w-[96px] text-center select-none ${
                     isActive
-                      ? 'border-[var(--lagoon-deep)] bg-white text-[var(--sea-ink)] shadow-md shadow-[var(--lagoon-deep)]/5 font-extrabold transform scale-[1.03]'
-                      : 'border-[var(--line)]/20 bg-white/40 text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/80'
+                      ? 'border-[var(--lagoon-deep)] bg-white text-[var(--sea-ink)] shadow-md shadow-[var(--lagoon-deep)]/10 font-extrabold scale-[1.02] ring-2 ring-[var(--lagoon-deep)]/20'
+                      : 'border-[var(--line)]/20 bg-white/40 text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] hover:bg-white/80 hover:scale-[1.01]'
                   }`}
                 >
                   <div className="flex items-center gap-1.5">

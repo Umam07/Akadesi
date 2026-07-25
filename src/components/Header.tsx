@@ -105,67 +105,63 @@ export default function Header({ session }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] backdrop-blur-lg">
-      <nav className="page-wrap flex items-center justify-between py-0" style={{ height: 60 }}>
+      <nav className="page-wrap relative flex items-center justify-between py-0" style={{ height: 60 }}>
 
-        {/* Left: Brand + Nav Links */}
-        <div className="flex items-center gap-12 md:gap-16">
-
-          {/* Brand Logo */}
-          <Link
-            to="/"
-            className="group inline-flex items-center gap-2 no-underline"
-            style={{ textDecoration: 'none' }}
+        {/* Brand Logo */}
+        <Link
+          to="/"
+          className="group inline-flex items-center gap-2 no-underline z-10"
+          style={{ textDecoration: 'none' }}
+        >
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 9,
+              background: 'var(--sea-ink)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              transition: 'transform 180ms ease',
+            }}
+            className="group-hover:scale-95"
           >
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 9,
-                background: 'var(--sea-ink)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                transition: 'transform 180ms ease',
-              }}
-              className="group-hover:scale-95"
-            >
-              <ShieldCheck size={17} strokeWidth={2.5} color="var(--sand)" />
-            </div>
-            <span
-              style={{
-                fontFamily: 'Fraunces, Georgia, serif',
-                fontWeight: 700,
-                fontSize: 17,
-                color: 'var(--sea-ink)',
-                letterSpacing: '-0.02em',
-                lineHeight: 1,
-              }}
-            >
-              Akadesi
-            </span>
-          </Link>
+            <ShieldCheck size={17} strokeWidth={2.5} color="var(--sand)" />
+          </div>
+          <span
+            style={{
+              fontFamily: 'Fraunces, Georgia, serif',
+              fontWeight: 700,
+              fontSize: 17,
+              color: 'var(--sea-ink)',
+              letterSpacing: '-0.02em',
+              lineHeight: 1,
+            }}
+          >
+            Akadesi
+          </span>
+        </Link>
 
-          {/* Desktop Nav Links */}
-          {session && (
-            <div className="hidden md:flex items-center gap-0.5">
-              {NAV_LINKS.map(({ to, label, icon: Icon }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className="nav-pill"
-                  activeProps={{ className: 'nav-pill nav-pill-active' }}
-                >
-                  <Icon size={14} strokeWidth={2.2} style={{ flexShrink: 0 }} />
-                  {label}
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Desktop Nav Links (Centered) */}
+        {session && (
+          <div className="hidden md:flex items-center gap-0.5 md:absolute md:left-1/2 md:-translate-x-1/2">
+            {NAV_LINKS.map(({ to, label, icon: Icon }) => (
+              <Link
+                key={to}
+                to={to}
+                className="nav-pill"
+                activeProps={{ className: 'nav-pill nav-pill-active' }}
+              >
+                <Icon size={14} strokeWidth={2.2} style={{ flexShrink: 0 }} />
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
 
         {/* Right: Profile + Mobile Toggle */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 z-10">
 
           {/* Desktop Profile Dropdown */}
           {session && (
